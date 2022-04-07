@@ -1,8 +1,8 @@
 import { Box } from "@chakra-ui/react";
 import type { NextPage } from "next";
 
-const Home: NextPage = () => {
+const App: NextPage = () => {
   return <Box />;
 };
 
-export default Home;
+export default App;

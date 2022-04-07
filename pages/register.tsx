@@ -15,24 +15,26 @@ import { useForm } from "react-hook-form";
 type Fields = {
   email: string;
   password: string;
+  repeatPassword: string;
 };
 
-const Login: NextPage = () => {
+const Register: NextPage = () => {
   const toast = useToast();
   const router = useRouter();
   const {
-    register,
+    register: _register,
+    getValues,
     handleSubmit,
     formState: { isSubmitting, isValid, errors },
   } = useForm<Fields>({
     mode: "onChange",
     reValidateMode: "onChange",
-    defaultValues: { email: "", password: "" },
+    defaultValues: { email: "", password: "", repeatPassword: "" },
   });
 
-  async function login(fields: Fields) {
+  async function register(fields: Fields) {
     try {
-      const { error } = await supabaseClient.auth.signIn({
+      const { error } = await supabaseClient.auth.signUp({
         email: fields.email,
         password: fields.password,
       });
@@ -41,15 +43,11 @@ const Login: NextPage = () => {
         throw error;
       }
 
-      if (typeof router.query.redirectedFrom === "string") {
-        router.replace(router.query.redirectedFrom);
-      } else {
-        router.replace("/app");
-      }
+      router.replace("/app");
     } catch (_e) {
       toast({
-        title: "Could not login",
-        description: "Please double check your credentials",
+        title: "Could not register",
+        description: "Please try again later",
         status: "error",
         duration: 2000,
       });
@@ -57,14 +55,14 @@ const Login: NextPage = () => {
   }
 
   return (
-    <Box as="form" onSubmit={handleSubmit(login)}>
+    <Box as="form" onSubmit={handleSubmit(register)}>
       <FormControl isInvalid={!!errors.email}>
         <FormLabel htmlFor="email">Email</FormLabel>
         <Input
           id="email"
           type="email"
           placeholder="you@example.com"
-          {...register("email", {
+          {..._register("email", {
             required: {
               value: true,
               message: "Insert your email",
@@ -83,7 +81,7 @@ const Login: NextPage = () => {
           id="password"
           type="password"
           placeholder="your password"
-          {...register("password", {
+          {..._register("password", {
             required: {
               value: true,
               message: "Insert your password",
@@ -96,11 +94,30 @@ const Login: NextPage = () => {
         />
         <FormErrorMessage>{errors.password?.message}</FormErrorMessage>
       </FormControl>
+      <FormControl isInvalid={!!errors.repeatPassword}>
+        <FormLabel htmlFor="repeatPassword">Repeat password</FormLabel>
+        <Input
+          id="repeatPassword"
+          type="password"
+          placeholder="your password again"
+          {..._register("repeatPassword", {
+            required: {
+              value: true,
+              message: "Insert your password",
+            },
+            validate: (value) =>
+              value !== getValues("password")
+                ? "Make sure the passwords match"
+                : true,
+          })}
+        />
+        <FormErrorMessage>{errors.repeatPassword?.message}</FormErrorMessage>
+      </FormControl>
       <Button type="submit" disabled={!isValid} isLoading={isSubmitting}>
-        Login
+        Register
       </Button>
     </Box>
   );
 };
 
-export default Login;
+export default Register;
