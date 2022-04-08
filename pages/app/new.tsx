@@ -2,7 +2,7 @@ import { Box } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import UploadForm from "../../components/forms/UploadForm";
 
-const Upload: NextPage = () => {
+const New: NextPage = () => {
   return (
     <Box>
       <UploadForm />
@@ -10,4 +10,4 @@ const Upload: NextPage = () => {
   );
 };
 
-export default Upload;
+export default New;

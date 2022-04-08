@@ -17,7 +17,8 @@
     "next": "12.1.4",
     "react": "^17",
     "react-dom": "^17",
-    "react-hook-form": "^7.29.0"
+    "react-hook-form": "^7.29.0",
+    "react-query": "^3.34.19"
   },
   "devDependencies": {
     "@types/node": "17.0.23",
