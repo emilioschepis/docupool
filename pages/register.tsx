@@ -7,10 +7,10 @@ import {
   Input,
   useToast,
 } from "@chakra-ui/react";
-import { supabaseClient } from "@supabase/supabase-auth-helpers/nextjs";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
+import supabase from "../lib/supabase";
 
 type Fields = {
   email: string;
@@ -33,18 +33,12 @@ const Register: NextPage = () => {
   });
 
   async function register(fields: Fields) {
-    try {
-      const { error } = await supabaseClient.auth.signUp({
-        email: fields.email,
-        password: fields.password,
-      });
+    const { error } = await supabase.auth.signUp({
+      email: fields.email,
+      password: fields.password,
+    });
 
-      if (error) {
-        throw error;
-      }
-
-      router.replace("/app");
-    } catch (_e) {
+    if (error) {
       toast({
         title: "Could not register",
         description: "Please try again later",

@@ -7,10 +7,10 @@ import {
   Input,
   useToast,
 } from "@chakra-ui/react";
-import { supabaseClient } from "@supabase/supabase-auth-helpers/nextjs";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
+import supabase from "../lib/supabase";
 
 type Fields = {
   email: string;
@@ -31,22 +31,12 @@ const Login: NextPage = () => {
   });
 
   async function login(fields: Fields) {
-    try {
-      const { error } = await supabaseClient.auth.signIn({
-        email: fields.email,
-        password: fields.password,
-      });
+    const { error } = await supabase.auth.signIn({
+      email: fields.email,
+      password: fields.password,
+    });
 
-      if (error) {
-        throw error;
-      }
-
-      if (typeof router.query.redirectedFrom === "string") {
-        router.replace(router.query.redirectedFrom);
-      } else {
-        router.replace("/app");
-      }
-    } catch (_e) {
+    if (error) {
       toast({
         title: "Could not login",
         description: "Please double check your credentials",

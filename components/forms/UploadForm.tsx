@@ -10,10 +10,9 @@ import {
   Textarea,
   useToast,
 } from "@chakra-ui/react";
-import { supabaseClient } from "@supabase/supabase-auth-helpers/nextjs";
-import { useUser } from "@supabase/supabase-auth-helpers/react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
+import supabase from "../../lib/supabase";
 
 type Props = {};
 export type Fields = {
@@ -23,7 +22,6 @@ export type Fields = {
 };
 
 const UploadForm = ({}: Props) => {
-  const { user } = useUser();
   const toast = useToast();
   const router = useRouter();
   const {
@@ -38,11 +36,12 @@ const UploadForm = ({}: Props) => {
       return;
     }
 
+    const user = supabase.auth.user();
     const uuid = crypto.randomUUID();
     const segments = file.name.split(".");
     const extension = segments[segments.length - 1];
     const filename = `${uuid}.${extension}`;
-    const { data, error: uploadError } = await supabaseClient.storage
+    const { data, error: uploadError } = await supabase.storage
       .from("uploads")
       .upload(`${user!.id}/${uuid}/${filename}`, file);
 
@@ -56,16 +55,14 @@ const UploadForm = ({}: Props) => {
       throw uploadError;
     }
 
-    const { error: databaseError } = await supabaseClient
-      .from("documents")
-      .insert({
-        id: uuid,
-        user_id: user!.id,
-        title: fields.title,
-        description: fields.description,
-        filename,
-        status: "pending",
-      });
+    const { error: databaseError } = await supabase.from("documents").insert({
+      id: uuid,
+      user_id: user!.id,
+      title: fields.title,
+      description: fields.description,
+      filename,
+      status: "pending",
+    });
 
     if (databaseError) {
       toast({

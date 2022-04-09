@@ -1,21 +1,20 @@
 import { Box, Input } from "@chakra-ui/react";
-import { supabaseClient } from "@supabase/supabase-auth-helpers/nextjs";
-import { useUser } from "@supabase/supabase-auth-helpers/react";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
+import supabase from "../../lib/supabase";
 import { Document } from "../../lib/types/types";
 import DocumentsTable from "./DocumentsTable";
 
 type Props = {};
 
 const SearchBox = ({}: Props) => {
-  const { user } = useUser();
+  const user = supabase.auth.user();
   const [text, setText] = useState("");
   const [search, setSearch] = useState("");
   const { data } = useQuery(
     ["SEARCH", search],
     async () => {
-      const { data, error } = await supabaseClient
+      const { data, error } = await supabase
         .from<Document>("documents")
         .select("*")
         .neq("user_id", user!.id)

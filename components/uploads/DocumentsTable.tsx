@@ -9,15 +9,15 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import { supabaseClient } from "@supabase/supabase-auth-helpers/nextjs";
 import { useQuery } from "react-query";
+import supabase from "../../lib/supabase";
 import { Document } from "../../lib/types/types";
 
 type Props = {};
 
 const DocumentsTable = ({}: Props) => {
   const { data } = useQuery(["MY_DOCUMENTS"], async () => {
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from<Document>("documents")
       .select("*");
 
