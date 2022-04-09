@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider, useQuery } from "react-query";
+import { QueryClient } from "react-query";
 
 const queryClient = new QueryClient();
 

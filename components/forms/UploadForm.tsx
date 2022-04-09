@@ -8,6 +8,7 @@ import {
   Input,
   Text,
   Textarea,
+  useToast,
 } from "@chakra-ui/react";
 import { supabaseClient } from "@supabase/supabase-auth-helpers/nextjs";
 import { useUser } from "@supabase/supabase-auth-helpers/react";
@@ -22,7 +23,8 @@ export type Fields = {
 };
 
 const UploadForm = ({}: Props) => {
-  const user = useUser();
+  const { user } = useUser();
+  const toast = useToast();
   const router = useRouter();
   const {
     register,
@@ -36,28 +38,43 @@ const UploadForm = ({}: Props) => {
       return;
     }
 
-    try {
-      const uuid = crypto.randomUUID();
-      const segments = file.name.split(".");
-      const extension = segments[segments.length - 1];
-      const fileName = `${uuid}.${extension}`;
-      const { data, error } = await supabaseClient.storage
-        .from("uploads")
-        .upload(`${user.user!.id}/${fileName}`, file);
+    const uuid = crypto.randomUUID();
+    const segments = file.name.split(".");
+    const extension = segments[segments.length - 1];
+    const filename = `${uuid}.${extension}`;
+    const { data, error: uploadError } = await supabaseClient.storage
+      .from("uploads")
+      .upload(`${user!.id}/${filename}`, file);
 
-      if (error) {
-        throw error;
-      }
+    if (uploadError || !data) {
+      toast({
+        title: "Could not upload your document",
+        description: "Please try again later",
+        status: "error",
+        duration: 2000,
+      });
+      throw uploadError;
+    }
 
-      await supabaseClient.from("pending_documents").insert({
+    const { error: databaseError } = await supabaseClient
+      .from("documents")
+      .insert({
         id: uuid,
-        user_id: user.user!.id,
+        user_id: user!.id,
         title: fields.title,
         description: fields.description,
-        file_key: data!.Key,
+        filename,
+        status: "pending",
       });
-    } catch (_e) {
-      console.warn(_e);
+
+    if (databaseError) {
+      toast({
+        title: "Could not upload your document",
+        description: "Please try again later",
+        status: "error",
+        duration: 2000,
+      });
+      throw databaseError;
     }
   }
 

@@ -1,13 +1,11 @@
 import { Box } from "@chakra-ui/react";
 import type { NextPage } from "next";
-import PendingDocumentsTable from "../../components/uploads/PendingDocumentsTable";
-import PublicDocumentsTable from "../../components/uploads/PublicDocumentsTable";
+import DocumentsTable from "../../components/uploads/DocumentsTable";
 
 const Uploads: NextPage = () => {
   return (
     <Box>
-      <PendingDocumentsTable />
-      <PublicDocumentsTable />
+      <DocumentsTable />
     </Box>
   );
 };

@@ -4,33 +4,31 @@ import {
 } from "@supabase/supabase-auth-helpers/nextjs";
 
 export default withAuthRequired(async (req, res) => {
-  const id = req.query.id as string;
-  const type = req.query.type as string;
-
-  if (!["pending", "public"].includes(type)) {
-    return res
-      .status(400)
-      .json({ message: "Please specify the download type." });
-  }
-
-  const { token } = await supabaseClient.auth.api.getUserByCookie(req);
+  const { token } = await supabaseClient.auth.api.getUserByCookie(req, res);
   supabaseClient.auth.setAuth(token!);
 
+  const id = req.query.id as string;
+  if (!id) {
+    return res.status(400).json({ message: "Document id is missing." });
+  }
+
   const { data, error } = await supabaseClient
-    .from(type === "pending" ? "pending_documents" : "public_documents")
+    .from("documents")
     .select("*")
     .eq("id", id)
     .single();
 
   if (error) {
+    console.warn(error);
     return res.status(500).json({ message: "An unknown error has occurred." });
   }
 
   const { data: file, error: downloadError } = await supabaseClient.storage
     .from("uploads")
-    .download(data.file_key.replace("uploads/", ""));
+    .download(`${data.user_id}/${data.filename}`);
 
   if (downloadError || !file) {
+    console.warn(downloadError);
     return res.status(500).json({ message: "An unknown error has occurred." });
   }
 
