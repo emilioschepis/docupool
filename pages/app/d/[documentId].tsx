@@ -1,4 +1,4 @@
-import { Box, Heading, Text, Link as ChakraLink } from "@chakra-ui/react";
+import { Box, Heading, Link as ChakraLink, Text } from "@chakra-ui/react";
 import { createClient } from "@supabase/supabase-js";
 import type { GetServerSideProps, NextPage } from "next";
 import Link from "next/link";
@@ -51,6 +51,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       notFound: true,
     };
   }
+
+  await adminClient
+    .from("document_views")
+    .upsert({ document_id: documentId, user_id: user?.id })
+    .single();
 
   return {
     props: {
