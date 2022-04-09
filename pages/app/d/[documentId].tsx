@@ -1,6 +1,7 @@
-import { Box, Heading, Text } from "@chakra-ui/react";
+import { Box, Heading, Text, Link as ChakraLink } from "@chakra-ui/react";
 import { createClient } from "@supabase/supabase-js";
 import type { GetServerSideProps, NextPage } from "next";
+import Link from "next/link";
 import supabase from "../../../lib/supabase";
 import { Document, Topic } from "../../../lib/types/types";
 
@@ -16,7 +17,11 @@ const DocumentPage: NextPage<Props> = ({ document }) => {
       <Heading as="h1">{document.title}</Heading>
       <Text>{document.description}</Text>
       <Text>{formatter.format(new Date(document.created_at))}</Text>
-      {document.topic ? <Text>{document.topic.name}</Text> : null}
+      {document.topic ? (
+        <Link href={`/app/t/${document.topic.id}`} passHref>
+          <ChakraLink>{document.topic.name}</ChakraLink>
+        </Link>
+      ) : null}
     </Box>
   );
 };
