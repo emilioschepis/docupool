@@ -44,7 +44,7 @@ const UploadForm = ({}: Props) => {
     const filename = `${uuid}.${extension}`;
     const { data, error: uploadError } = await supabaseClient.storage
       .from("uploads")
-      .upload(`${user!.id}/${filename}`, file);
+      .upload(`${user!.id}/${uuid}/${filename}`, file);
 
     if (uploadError || !data) {
       toast({

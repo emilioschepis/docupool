@@ -25,7 +25,7 @@ export default withAuthRequired(async (req, res) => {
 
   const { data: file, error: downloadError } = await supabaseClient.storage
     .from("uploads")
-    .download(`${data.user_id}/${data.filename}`);
+    .download(`${data.user_id}/${data.id}/${data.filename}`);
 
   if (downloadError || !file) {
     console.warn(downloadError);

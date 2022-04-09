@@ -34,7 +34,6 @@ const DocumentsTable = ({}: Props) => {
       <Table>
         <Thead>
           <Tr>
-            <Th>id</Th>
             <Th>title</Th>
             <Th>description</Th>
             <Th>status</Th>
@@ -44,7 +43,6 @@ const DocumentsTable = ({}: Props) => {
         <Tbody>
           {data?.map((document) => (
             <Tr key={document.id}>
-              <Td>{document.id}</Td>
               <Td>{document.title}</Td>
               <Td>{document.description}</Td>
               <Td>{document.status}</Td>
