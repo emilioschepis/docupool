@@ -8,7 +8,9 @@ import {
   Th,
   Thead,
   Tr,
+  Link as ChakraLink,
 } from "@chakra-ui/react";
+import Link from "next/link";
 import { useQuery } from "react-query";
 import supabase from "../../lib/supabase";
 import { Document } from "../../lib/types/types";
@@ -42,7 +44,11 @@ const DocumentsTable = ({}: Props) => {
         <Tbody>
           {data?.map((document) => (
             <Tr key={document.id}>
-              <Td>{document.title}</Td>
+              <Td>
+                <Link href={`/app/d/${document.id}`} passHref>
+                  <ChakraLink>{document.title}</ChakraLink>
+                </Link>
+              </Td>
               <Td>{document.description}</Td>
               <Td>{document.status}</Td>
               <Td>
