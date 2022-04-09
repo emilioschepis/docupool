@@ -13,20 +13,26 @@ import {
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import supabase from "../../lib/supabase";
+import { Topic } from "../../lib/types/types";
 
-type Props = {};
+type Props = {
+  topics: Topic[];
+};
 export type Fields = {
   title: string;
   description: string;
   file: FileList;
+  topic: string;
 };
 
-const UploadForm = ({}: Props) => {
+const UploadForm = ({ topics }: Props) => {
   const toast = useToast();
   const router = useRouter();
   const {
+    watch,
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isValid, isSubmitting, isSubmitSuccessful },
   } = useForm<Fields>({ mode: "onChange" });
 
@@ -34,6 +40,17 @@ const UploadForm = ({}: Props) => {
     const file = fields.file.item(0);
     if (!file) {
       return;
+    }
+
+    let topicId = topics.find(
+      (topic) => topic.name.toLowerCase() === fields.topic.toLowerCase()
+    )?.id;
+    if (fields.topic.length > 0 && !topicId) {
+      const { data } = await supabase
+        .from("topics")
+        .insert({ name: fields.topic.toLowerCase() })
+        .single();
+      topicId = data?.id;
     }
 
     const user = supabase.auth.user();
@@ -62,6 +79,7 @@ const UploadForm = ({}: Props) => {
       description: fields.description,
       filename,
       status: "pending",
+      topic_id: topicId,
     });
 
     if (databaseError) {
@@ -104,6 +122,35 @@ const UploadForm = ({}: Props) => {
             />
             <FormErrorMessage>{errors.title?.message}</FormErrorMessage>
           </FormControl>
+          <FormControl isInvalid={!!errors.topic}>
+            <FormLabel htmlFor="topic">Topic</FormLabel>
+            <Input
+              id="topic"
+              type="text"
+              placeholder="Your document's topic"
+              {...register("topic")}
+              isDisabled={isSubmitting}
+            />
+            <FormErrorMessage>{errors.topic?.message}</FormErrorMessage>
+          </FormControl>
+          {topics.length > 0 && watch("topic")?.length > 0 ? (
+            <Box>
+              {topics
+                .filter((topic) =>
+                  topic.name
+                    .toLowerCase()
+                    .includes(watch("topic").toLowerCase())
+                )
+                .map((topic) => (
+                  <Button
+                    key={topic.id}
+                    onClick={() => setValue("topic", topic.name)}
+                  >
+                    {topic.name}
+                  </Button>
+                ))}
+            </Box>
+          ) : null}
           <FormControl isInvalid={!!errors.description}>
             <FormLabel htmlFor="description">Description</FormLabel>
             <Textarea
