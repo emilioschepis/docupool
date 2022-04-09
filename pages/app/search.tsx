@@ -1,18 +1,18 @@
 import { Box } from "@chakra-ui/react";
 import { useUser } from "@supabase/supabase-auth-helpers/react";
 import type { NextPage } from "next";
-import DocumentsTable from "../../components/uploads/DocumentsTable";
+import SearchBox from "../../components/search/SearchBox";
 
-const Uploads: NextPage = () => {
+const Search: NextPage = () => {
   const { user } = useUser();
 
   if (!user) return null;
 
   return (
     <Box>
-      <DocumentsTable />
+      <SearchBox />
     </Box>
   );
 };
 
-export default Uploads;
+export default Search;

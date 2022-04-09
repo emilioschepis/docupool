@@ -10,7 +10,6 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import { supabaseClient } from "@supabase/supabase-auth-helpers/nextjs";
-import { useRouter } from "next/router";
 import { useQuery } from "react-query";
 import { Document } from "../../lib/types/types";
 
