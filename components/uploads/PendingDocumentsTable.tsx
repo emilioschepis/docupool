@@ -1,5 +1,6 @@
+import { DownloadIcon } from "@chakra-ui/icons";
 import {
-  Box,
+  IconButton,
   Table,
   TableContainer,
   Tbody,
@@ -9,12 +10,14 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import { supabaseClient } from "@supabase/supabase-auth-helpers/nextjs";
+import { useRouter } from "next/router";
 import { useQuery } from "react-query";
 import { PendingDocument } from "../../lib/types/types";
 
 type Props = {};
 
 const PendingDocumentsTable = ({}: Props) => {
+  const router = useRouter();
   const { data } = useQuery(["PENDING_DOCUMENTS"], async () => {
     const { data, error } = await supabaseClient
       .from<PendingDocument>("pending_documents")
@@ -35,6 +38,7 @@ const PendingDocumentsTable = ({}: Props) => {
             <Th>id</Th>
             <Th>title</Th>
             <Th>description</Th>
+            <Th>download</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -43,6 +47,18 @@ const PendingDocumentsTable = ({}: Props) => {
               <Td>{document.id}</Td>
               <Td>{document.title}</Td>
               <Td>{document.description}</Td>
+              <Td>
+                <IconButton
+                  aria-label="download"
+                  icon={<DownloadIcon />}
+                  onClick={() =>
+                    window.open(
+                      `/api/download?id=${document.id}&type=pending`,
+                      "_blank"
+                    )
+                  }
+                ></IconButton>
+              </Td>
             </Tr>
           ))}
         </Tbody>
