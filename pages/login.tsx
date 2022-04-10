@@ -4,10 +4,15 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
+  Heading,
   Input,
+  Text,
   useToast,
+  VStack,
+  Link as ChakraLink,
 } from "@chakra-ui/react";
 import type { NextPage } from "next";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import supabase from "../lib/supabase";
@@ -47,48 +52,79 @@ const Login: NextPage = () => {
   }
 
   return (
-    <Box as="form" onSubmit={handleSubmit(login)}>
-      <FormControl isInvalid={!!errors.email}>
-        <FormLabel htmlFor="email">Email</FormLabel>
-        <Input
-          id="email"
-          type="email"
-          placeholder="you@example.com"
-          {...register("email", {
-            required: {
-              value: true,
-              message: "Insert your email",
-            },
-            pattern: {
-              value: /^\S+@\S+\.\S+$/,
-              message: "Insert a valid email",
-            },
-          })}
-        />
-        <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
-      </FormControl>
-      <FormControl isInvalid={!!errors.password}>
-        <FormLabel htmlFor="password">Password</FormLabel>
-        <Input
-          id="password"
-          type="password"
-          placeholder="your password"
-          {...register("password", {
-            required: {
-              value: true,
-              message: "Insert your password",
-            },
-            minLength: {
-              value: 6,
-              message: "Insert a strong password",
-            },
-          })}
-        />
-        <FormErrorMessage>{errors.password?.message}</FormErrorMessage>
-      </FormControl>
-      <Button type="submit" disabled={!isValid} isLoading={isSubmitting}>
+    <Box as="form" onSubmit={handleSubmit(login)} p={6}>
+      <Heading as="h1" textAlign="center" color="brand" fontWeight="normal">
         Login
-      </Button>
+      </Heading>
+      <VStack alignItems="stretch" pt={4} spacing={4}>
+        <FormControl isInvalid={!!errors.email}>
+          <FormLabel htmlFor="email">Email</FormLabel>
+          <Input
+            id="email"
+            type="email"
+            variant="filled"
+            placeholder="you@example.com"
+            bg="#EBEDEF"
+            {...register("email", {
+              required: {
+                value: true,
+                message: "Insert your email",
+              },
+              pattern: {
+                value: /^\S+@\S+\.\S+$/,
+                message: "Insert a valid email",
+              },
+            })}
+          />
+          <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
+        </FormControl>
+        <FormControl isInvalid={!!errors.password}>
+          <FormLabel htmlFor="password">Password</FormLabel>
+          <Input
+            id="password"
+            type="password"
+            variant="filled"
+            placeholder="your password"
+            bg="#EBEDEF"
+            {...register("password", {
+              required: {
+                value: true,
+                message: "Insert your password",
+              },
+              minLength: {
+                value: 6,
+                message: "Insert a strong password",
+              },
+            })}
+          />
+          <FormErrorMessage>{errors.password?.message}</FormErrorMessage>
+        </FormControl>
+        <Button
+          bg="brand"
+          w="full"
+          type="submit"
+          disabled={!isValid}
+          isLoading={isSubmitting}
+          _hover={{
+            bg: "brand",
+          }}
+          color="white"
+        >
+          Login
+        </Button>
+        <Text textAlign="center">
+          Don&apos;t have an account yet?{" "}
+          <Link passHref href="/register">
+            <ChakraLink
+              color="brand"
+              fontWeight="bold"
+              textDecoration="underline"
+            >
+              Register
+            </ChakraLink>
+          </Link>
+        </Text>
+      </VStack>
     </Box>
   );
 };
