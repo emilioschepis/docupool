@@ -12,6 +12,7 @@ import {
   Link as ChakraLink,
   Flex,
   useMediaQuery,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import Head from "next/head";
@@ -27,7 +28,7 @@ type Fields = {
 };
 
 const Login: NextPage = () => {
-  const [isDesktop] = useMediaQuery("(min-width: 768px)");
+  const showSidebar = useBreakpointValue({ base: false, md: true }, "base");
   const toast = useToast();
   const router = useRouter();
   const {
@@ -62,7 +63,7 @@ const Login: NextPage = () => {
         <title>Login | DocuPool</title>
       </Head>
       <Flex w="full" h="full" alignItems="center">
-        {isDesktop && (
+        {showSidebar && (
           <Flex
             direction="column"
             flex={1}
