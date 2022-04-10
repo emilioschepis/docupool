@@ -6,6 +6,7 @@ import {
   HStack,
   Text,
   VStack,
+  Button,
   Drawer,
   useDisclosure,
   DrawerOverlay,
@@ -59,6 +60,10 @@ const HeaderUser = ({ avatarOnly = false }: { avatarOnly?: boolean }) => {
     }
   );
 
+  async function logout() {
+    await supabase.auth.signOut();
+  }
+
   if (isLoadingCoins || isLoadingProfiles || !coinsData || !profileData) {
     return null;
   }
@@ -85,6 +90,14 @@ const HeaderUser = ({ avatarOnly = false }: { avatarOnly?: boolean }) => {
           <Text fontSize="md" lineHeight={5} fontWeight="bold">
             {profileData.name}
           </Text>
+          <Button
+            variant="unstyled"
+            onClick={logout}
+            h={6}
+            style={{ marginTop: 0 }}
+          >
+            Logout
+          </Button>
         </VStack>
       ) : null}
     </HStack>
