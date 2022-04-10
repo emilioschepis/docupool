@@ -13,8 +13,10 @@ import {
   IconButton,
   InputGroup,
   useMediaQuery,
+  HStack,
 } from "@chakra-ui/react";
 import type { NextPage } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -188,20 +190,29 @@ const Search: NextPage = () => {
                               bg="#EBEDEF"
                               borderRadius={4}
                             >
-                              <Text
+                              <HStack
                                 bg="brand"
                                 color="white"
                                 position="absolute"
                                 top={0}
                                 right={0}
                                 py={1.5}
-                                px={4}
-                                fontWeight="bold"
-                                fontSize="md"
+                                px={2}
                                 borderRadius={4}
                               >
-                                01
-                              </Text>
+                                <Box w={4} h={4}>
+                                  <Image
+                                    width={48}
+                                    height={48}
+                                    layout="responsive"
+                                    alt=""
+                                    src="/coins-white.png"
+                                  />
+                                </Box>
+                                <Text fontWeight="bold" fontSize="md">
+                                  01
+                                </Text>
+                              </HStack>
                             </Box>
                             <VStack alignItems="flex-start" spacing={0}>
                               <Text fontSize="xs" color="#88918F">

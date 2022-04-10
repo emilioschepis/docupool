@@ -76,7 +76,7 @@ const HeaderUser = ({ avatarOnly = false }: { avatarOnly?: boolean }) => {
                 layout="responsive"
                 alt=""
                 src="/coins-brand.png"
-              ></Image>
+              />
             </Box>
             <Text fontSize="sm" lineHeight={4} fontWeight="bold" color="brand">
               {coinsData.coins}
