@@ -84,7 +84,7 @@ const Header = ({}: Props) => {
       alignItems="center"
       borderBottomWidth={2}
       borderBottomColor="#F5F6F7"
-      px={14}
+      px={10}
     >
       <Box as="nav" flex={1}>
         <HStack spacing={10} alignItems="center">

@@ -1,9 +1,13 @@
+import { SearchIcon } from "@chakra-ui/icons";
 import {
   Box,
   FormControl,
   FormErrorMessage,
   FormLabel,
+  IconButton,
   Input,
+  InputGroup,
+  InputRightAddon,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
@@ -28,13 +32,33 @@ const SearchBar = ({}: Props) => {
   return (
     <Box as="form" onSubmit={handleSubmit(performSearch)}>
       <FormControl isInvalid={!!errors.search}>
-        <FormLabel htmlFor="search">Search</FormLabel>
-        <Input
-          id="search"
-          type="text"
-          placeholder="Applied mathematics"
-          {...register("search")}
-        />
+        <InputGroup height={16}>
+          <Input
+            id="search"
+            aria-label="search"
+            type="text"
+            placeholder="Start searching for a document or topic..."
+            {...register("search")}
+            variant="filled"
+            height={16}
+            bg="#EBEDEF"
+          />
+          <InputRightAddon
+            border="none"
+            bg="brand"
+            color="white"
+            h={16}
+            w={20}
+            justifyContent="center"
+          >
+            <IconButton
+              aria-label="search"
+              type="submit"
+              variant="unstyled"
+              icon={<SearchIcon w={5} h={5} />}
+            />
+          </InputRightAddon>
+        </InputGroup>
       </FormControl>
     </Box>
   );
