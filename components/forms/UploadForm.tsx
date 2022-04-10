@@ -146,6 +146,7 @@ const UploadForm = ({ topics }: Props) => {
                 borderWidth={2}
                 borderColor="brand"
                 overflow="hidden"
+                bg="brand"
               >
                 <Box flex={1} bg="brand" color="white" py={2}>
                   <Text
