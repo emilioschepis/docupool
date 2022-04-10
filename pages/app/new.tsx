@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Heading } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import { useQuery } from "react-query";
 import UploadForm from "../../components/forms/UploadForm";
@@ -20,6 +20,16 @@ const New: NextPage = () => {
   return (
     <Box>
       <Header />
+      <Heading
+        as="h1"
+        pt={12}
+        px={10}
+        fontSize="2xl"
+        fontWeight="normal"
+        color="#2B3B38"
+      >
+        Upload a document
+      </Heading>
       <UploadForm topics={data ?? []} />
     </Box>
   );

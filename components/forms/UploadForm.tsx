@@ -9,9 +9,15 @@ import {
   Text,
   Textarea,
   useToast,
+  Flex,
+  VStack,
+  HStack,
+  IconButton,
 } from "@chakra-ui/react";
+import { ArrowRightIcon, CloseIcon, DeleteIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/router";
-import { useForm } from "react-hook-form";
+import { useEffect, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import supabase from "../../lib/supabase";
 import { Topic } from "../../lib/types/types";
 
@@ -30,11 +36,14 @@ const UploadForm = ({ topics }: Props) => {
   const router = useRouter();
   const {
     watch,
+    control,
     register,
     handleSubmit,
     setValue,
     formState: { errors, isValid, isSubmitting, isSubmitSuccessful },
   } = useForm<Fields>({ mode: "onChange" });
+  const [isDragging, setDragging] = useState(false);
+  const fileInputRef = useRef<HTMLDivElement>(null);
 
   async function uploadDocument(fields: Fields) {
     const file = fields.file.item(0);
@@ -96,98 +105,266 @@ const UploadForm = ({ topics }: Props) => {
   return (
     <>
       {isSubmitSuccessful ? (
-        <Box>
-          <Heading as="h1">Thank you!</Heading>
-          <Text>
-            We received your document and will be reviewing it shortly.
+        <VStack maxW="512px" mx="auto" spacing={4}>
+          <Text fontSize="2rem" lineHeight={10} color="brand" fontWeight="bold">
+            Thank you!
           </Text>
-          <Button onClick={() => router.push("/app")}>Go back home</Button>
-        </Box>
+          <Text>The document has been sent to be reviewed</Text>
+          <Button
+            bg="brand"
+            onClick={() => router.push("/app")}
+            color="white"
+            _hover={{ bg: "brand" }}
+          >
+            Home page
+          </Button>
+        </VStack>
       ) : (
-        <Box as="form" onSubmit={handleSubmit(uploadDocument)}>
-          <p>{JSON.stringify(errors.file?.type)}</p>
-          <FormControl isInvalid={!!errors.title}>
-            <FormLabel htmlFor="title">Title</FormLabel>
-            <Input
-              id="title"
-              type="text"
-              placeholder="Your document's title"
-              {...register("title", {
-                required: {
-                  value: true,
-                  message: "Insert a title",
-                },
-              })}
-              isDisabled={isSubmitting}
-            />
-            <FormErrorMessage>{errors.title?.message}</FormErrorMessage>
-          </FormControl>
-          <FormControl isInvalid={!!errors.topic}>
-            <FormLabel htmlFor="topic">Topic</FormLabel>
-            <Input
-              id="topic"
-              type="text"
-              placeholder="Your document's topic"
-              {...register("topic")}
-              isDisabled={isSubmitting}
-            />
-            <FormErrorMessage>{errors.topic?.message}</FormErrorMessage>
-          </FormControl>
-          {topics.length > 0 && watch("topic")?.length > 0 ? (
-            <Box>
-              {topics
-                .filter((topic) =>
-                  topic.name
-                    .toLowerCase()
-                    .includes(watch("topic").toLowerCase())
-                )
-                .map((topic) => (
-                  <Button
-                    key={topic.id}
-                    onClick={() => setValue("topic", topic.name)}
+        <Box
+          as="form"
+          onSubmit={handleSubmit(uploadDocument)}
+          maxW="512px"
+          mx="auto"
+        >
+          <VStack spacing={4} alignItems="flex-start">
+            <Flex
+              w="full"
+              borderRadius="lg"
+              borderWidth={2}
+              borderColor="brand"
+              overflow="hidden"
+            >
+              <Box flex={1} bg="brand" color="white" py={2}>
+                <Text
+                  w="full"
+                  textAlign="center"
+                  fontSize="lg"
+                  fontWeight="bold"
+                >
+                  Selection &amp; Details
+                </Text>
+              </Box>
+              <Box flex={1} color="brand" bg="white" py={2}>
+                <Text
+                  w="full"
+                  textAlign="center"
+                  fontSize="lg"
+                  fontWeight="bold"
+                >
+                  In review
+                </Text>
+              </Box>
+            </Flex>
+
+            <FormControl
+              ref={fileInputRef}
+              isInvalid={!!errors.file}
+              onDragEnter={() => setDragging(true)}
+              onDragLeave={(event) => {
+                console.log(
+                  event.target,
+                  fileInputRef.current?.firstChild,
+                  event.target === fileInputRef.current?.firstChild
+                );
+                if (event.target === fileInputRef.current?.firstChild) {
+                  setDragging(false);
+                }
+              }}
+              onDragOver={(event) => event.preventDefault()}
+              onDrop={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+
+                setDragging(false);
+
+                const file = event.dataTransfer.files.item(0);
+                if (!file) return;
+
+                const extension = file.name.split(".").pop();
+                const title = file.name.replace(`.${extension}`, "");
+
+                setValue("file", event.dataTransfer.files);
+                setValue("title", title, { shouldValidate: true });
+              }}
+            >
+              <Controller
+                name="file"
+                control={control}
+                rules={{
+                  validate: (list) => {
+                    if (!list.item(0)) return "Insert a file";
+
+                    return list.item(0)!.size > 5242880
+                      ? "Maximum upload size is 5MB"
+                      : true;
+                  },
+                }}
+                render={({}) => (
+                  <VStack
+                    justifyContent="center"
+                    p={16}
+                    bg="rgba(37, 167, 138, 0.05)"
+                    borderWidth={1}
+                    borderStyle="dashed"
+                    borderColor="brand"
+                    height="300px"
                   >
-                    {topic.name}
-                  </Button>
-                ))}
-            </Box>
-          ) : null}
-          <FormControl isInvalid={!!errors.description}>
-            <FormLabel htmlFor="description">Description</FormLabel>
-            <Textarea
-              id="description"
-              placeholder="Your document's description"
-              {...register("description", {
-                required: {
-                  value: true,
-                  message: "Insert a description",
-                },
-              })}
-              isDisabled={isSubmitting}
-            />
-            <FormErrorMessage>{errors.description?.message}</FormErrorMessage>
-          </FormControl>
-          <FormControl isInvalid={!!errors.file}>
-            <FormLabel htmlFor="file">File</FormLabel>
-            <Input
-              id="file"
-              type="file"
-              accept=".doc,.docx,.pdf"
-              {...register("file", {
-                required: {
-                  value: true,
-                  message: "Insert a file",
-                },
-                validate: (list) =>
-                  list.item(0)!.size > 5242880
-                    ? "Maximum upload size is 5MB"
-                    : true,
-              })}
-              isDisabled={isSubmitting}
-            />
-            <FormErrorMessage>{errors.file?.message}</FormErrorMessage>
-          </FormControl>
-          <Button type="submit" isDisabled={!isValid} isLoading={isSubmitting}>
-            Submit
+                    {watch("file")?.item(0)?.name ? (
+                      <>
+                        <Text fontSize="lg" fontWeight="bold" color="#318170">
+                          {watch("file").item(0)!.name}
+                        </Text>
+                        <IconButton
+                          bg="transparent"
+                          aria-label="remove upload"
+                          icon={<DeleteIcon />}
+                          onClick={() => setValue("file", null!)}
+                        />
+                      </>
+                    ) : isDragging ? (
+                      <Text fontSize="lg" fontWeight="bold" color="#318170">
+                        Drop your file here
+                      </Text>
+                    ) : (
+                      <>
+                        <Text fontSize="lg" fontWeight="bold" color="#318170">
+                          Drag and drop to upload
+                        </Text>
+                        <Text>or</Text>
+                        <FormLabel
+                          htmlFor="file"
+                          py={2}
+                          px={4}
+                          borderWidth={1}
+                          borderColor="#318170"
+                          color="#318170"
+                          borderRadius="lg"
+                        >
+                          Browse my documents
+                        </FormLabel>
+                        <Text fontSize="xs" color="#6F6F76">
+                          Supported files: pdf, doc, docx
+                        </Text>
+                        <Input
+                          display="none"
+                          visibility="hidden"
+                          id="file"
+                          type="file"
+                          accept=".doc,.docx,.pdf"
+                          {...register("file", {})}
+                          isDisabled={isSubmitting}
+                        />
+                      </>
+                    )}
+                  </VStack>
+                )}
+              />
+              <FormErrorMessage>{errors.file?.message}</FormErrorMessage>
+            </FormControl>
+            <FormControl
+              w="full"
+              isInvalid={!!errors.title}
+              style={{ marginTop: "48px" }}
+            >
+              <FormLabel htmlFor="title">Title</FormLabel>
+              <Input
+                id="title"
+                type="text"
+                placeholder="Your document's title"
+                {...register("title", {
+                  required: {
+                    value: true,
+                    message: "Insert a title",
+                  },
+                })}
+                isDisabled={isSubmitting}
+                bg="transparent"
+                variant="unstyled"
+                paddingBottom={1}
+                borderRadius={0}
+                borderBottomWidth={0.5}
+                borderBottomColor="#2B3B38"
+              />
+              <FormErrorMessage>{errors.title?.message}</FormErrorMessage>
+            </FormControl>
+            <FormControl isInvalid={!!errors.topic}>
+              <FormLabel htmlFor="topic">Topic</FormLabel>
+              <Input
+                id="topic"
+                type="text"
+                placeholder="Your document's topic"
+                {...register("topic")}
+                isDisabled={isSubmitting}
+                bg="transparent"
+                variant="unstyled"
+                paddingBottom={1}
+                borderRadius={0}
+                borderBottomWidth={0.5}
+                borderBottomColor="#2B3B38"
+              />
+              <FormErrorMessage>{errors.topic?.message}</FormErrorMessage>
+            </FormControl>
+            {topics.length > 0 && watch("topic")?.length > 0 ? (
+              <Box>
+                {topics
+                  .filter((topic) =>
+                    topic.name
+                      .toLowerCase()
+                      .includes(watch("topic").toLowerCase())
+                  )
+                  .map((topic) => (
+                    <Button
+                      key={topic.id}
+                      onClick={() => setValue("topic", topic.name)}
+                    >
+                      {topic.name}
+                    </Button>
+                  ))}
+              </Box>
+            ) : null}
+            <FormControl isInvalid={!!errors.description}>
+              <FormLabel htmlFor="description">Description</FormLabel>
+              <Textarea
+                id="description"
+                placeholder="Your document's description"
+                {...register("description", {
+                  required: {
+                    value: true,
+                    message: "Insert a description",
+                  },
+                })}
+                isDisabled={isSubmitting}
+                bg="transparent"
+                variant="unstyled"
+                paddingBottom={1}
+                borderRadius={0}
+                borderBottomWidth={0.5}
+                borderBottomColor="#2B3B38"
+              />
+              <FormErrorMessage>{errors.description?.message}</FormErrorMessage>
+            </FormControl>
+          </VStack>
+          <Button
+            mt={8}
+            w="full"
+            variant="solid"
+            type="submit"
+            isDisabled={!isValid}
+            isLoading={isSubmitting}
+            h={10}
+            bg="brand"
+            color="white"
+            px={4}
+            borderRadius="lg"
+            fontSize="md"
+            lineHeight={5}
+            fontWeight="bold"
+            rightIcon={<ArrowRightIcon />}
+            _hover={{
+              bg: "brand",
+            }}
+          >
+            Send for review
           </Button>
         </Box>
       )}
