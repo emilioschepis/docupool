@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 import supabase from "../lib/supabase";
 
 type Fields = {
+  name: string;
   email: string;
   password: string;
   repeatPassword: string;
@@ -33,10 +34,17 @@ const Register: NextPage = () => {
   });
 
   async function register(fields: Fields) {
-    const { error } = await supabase.auth.signUp({
-      email: fields.email,
-      password: fields.password,
-    });
+    const { error } = await supabase.auth.signUp(
+      {
+        email: fields.email,
+        password: fields.password,
+      },
+      {
+        data: {
+          name: fields.name,
+        },
+      }
+    );
 
     if (error) {
       toast({
@@ -50,6 +58,21 @@ const Register: NextPage = () => {
 
   return (
     <Box as="form" onSubmit={handleSubmit(register)}>
+      <FormControl isInvalid={!!errors.name}>
+        <FormLabel htmlFor="name">Name</FormLabel>
+        <Input
+          id="name"
+          type="text"
+          placeholder="John Doe"
+          {..._register("name", {
+            required: {
+              value: true,
+              message: "Insert your name",
+            },
+          })}
+        />
+        <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
+      </FormControl>
       <FormControl isInvalid={!!errors.email}>
         <FormLabel htmlFor="email">Email</FormLabel>
         <Input

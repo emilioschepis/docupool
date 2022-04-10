@@ -11,48 +11,44 @@ import {
   Link as ChakraLink,
 } from "@chakra-ui/react";
 import Link from "next/link";
-import { Document } from "../../lib/types/types";
+import { Topic } from "../../lib/types/types";
 
 type Props = {
   search: string;
-  documents: Document[];
+  topics: Topic[];
 };
 
-const DocumentsTable = ({ search, documents }: Props) => {
+const TopicsTable = ({ search, topics }: Props) => {
   return (
     <TableContainer>
       <Table>
         <Thead>
           <Tr>
-            <Th>title</Th>
-            <Th>description</Th>
-            <Th>status</Th>
+            <Th>name</Th>
           </Tr>
         </Thead>
         <Tbody>
-          {documents.map((document) => {
-            const searchIndex = document.title
+          {topics.map((topic) => {
+            const searchIndex = topic.name
               .toLowerCase()
               .indexOf(search.toLowerCase());
 
             return (
-              <Tr key={document.id}>
+              <Tr key={topic.id}>
                 <Td>
-                  <Link href={`/app/d/${document.id}`} passHref>
+                  <Link href={`/app/t/${topic.id}`} passHref>
                     <ChakraLink>
-                      {document.title.substring(0, searchIndex)}
+                      {topic.name.substring(0, searchIndex)}
                       <b>
-                        {document.title.substring(
+                        {topic.name.substring(
                           searchIndex,
                           searchIndex + search.length
                         )}
                       </b>
-                      {document.title.substring(searchIndex + search.length)}
+                      {topic.name.substring(searchIndex + search.length)}
                     </ChakraLink>
                   </Link>
                 </Td>
-                <Td>{document.description}</Td>
-                <Td>{document.status}</Td>
               </Tr>
             );
           })}
@@ -62,4 +58,4 @@ const DocumentsTable = ({ search, documents }: Props) => {
   );
 };
 
-export default DocumentsTable;
+export default TopicsTable;

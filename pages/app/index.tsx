@@ -8,6 +8,8 @@ import {
 import type { NextPage } from "next";
 import Link from "next/link";
 import { useQuery } from "react-query";
+import Header from "../../components/Header";
+import SearchBar from "../../components/home/SearchBar";
 import supabase from "../../lib/supabase";
 
 const App: NextPage = () => {
@@ -41,7 +43,9 @@ const App: NextPage = () => {
 
   return (
     <Box>
+      <Header />
       <Heading as="h1">Docupool</Heading>
+      <SearchBar />
       <Heading as="h2">Followed topics</Heading>
       <Wrap>
         {followedTopics?.map((followed) => (
