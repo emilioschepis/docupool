@@ -135,7 +135,7 @@ const DocumentPage: NextPage<Props> = ({ document: _document }) => {
             bg="brand"
             _hover={{ bg: "brand" }}
             color="white"
-            onProgress={() => unlock()}
+            onClick={() => unlock()}
           >
             Unlock this file
           </Button>
