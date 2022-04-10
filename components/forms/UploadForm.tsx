@@ -21,6 +21,7 @@ import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import supabase from "../../lib/supabase";
 import { Topic } from "../../lib/types/types";
+import Image from "next/image";
 
 type Props = {
   topics: Topic[];
@@ -106,8 +107,16 @@ const UploadForm = ({ topics }: Props) => {
 
   return (
     <>
-      {isSubmitSuccessful ? (
+      {isSubmitSuccessful || true ? (
         <VStack maxW="512px" mx="auto" px={6} spacing={4}>
+          <Box pointerEvents="none" width={128} height={128}>
+            <Image
+              width={1564}
+              height={1404}
+              alt=""
+              src="/upload-completed.png"
+            />
+          </Box>
           <Text fontSize="2rem" lineHeight={10} color="brand" fontWeight="bold">
             Thank you!
           </Text>
@@ -232,6 +241,14 @@ const UploadForm = ({ topics }: Props) => {
                       </Text>
                     ) : (
                       <>
+                        <Box pointerEvents="none" width={128} height={128}>
+                          <Image
+                            width={1564}
+                            height={1404}
+                            alt="Drag and drop"
+                            src="/dd-illustration.png"
+                          />
+                        </Box>
                         <Text fontSize="lg" fontWeight="bold" color="#318170">
                           Drag and drop to upload
                         </Text>
@@ -368,6 +385,7 @@ const UploadForm = ({ topics }: Props) => {
             _hover={{
               bg: "brand",
             }}
+            mb={10}
           >
             Send for review
           </Button>

@@ -67,10 +67,21 @@ const HeaderUser = ({ avatarOnly = false }: { avatarOnly?: boolean }) => {
     <HStack alignItems="center" spacing={4}>
       <Avatar name={profileData.name} bg="#F4FBF9" textColor="brand" />
       {!avatarOnly ? (
-        <VStack spacing={0} alignItems="flex-start">
-          <Text fontSize="sm" lineHeight={4} fontWeight="bold" color="brand">
-            {coinsData.coins} coins
-          </Text>
+        <VStack spacing={1} alignItems="flex-start">
+          <HStack alignItems="center" spacing={1}>
+            <Box w={4} h={4}>
+              <Image
+                width={48}
+                height={48}
+                layout="responsive"
+                alt=""
+                src="/coins-brand.png"
+              ></Image>
+            </Box>
+            <Text fontSize="sm" lineHeight={4} fontWeight="bold" color="brand">
+              {coinsData.coins}
+            </Text>
+          </HStack>
           <Text fontSize="md" lineHeight={5} fontWeight="bold">
             {profileData.name}
           </Text>
@@ -175,7 +186,18 @@ const Header = ({}: Props) => {
               fontWeight="bold"
               mr={8}
             >
-              Upload a document
+              <HStack>
+                <Box w={4} h={4}>
+                  <Image
+                    width={48}
+                    height={48}
+                    alt=""
+                    src="/upload.png"
+                    layout="responsive"
+                  />
+                </Box>
+                <Text>Upload a document</Text>
+              </HStack>
             </ChakraLink>
           </Link>
           <HeaderUser />
@@ -284,7 +306,18 @@ const Header = ({}: Props) => {
                         fontWeight="bold"
                         mr={8}
                       >
-                        Upload a document
+                        <HStack>
+                          <Box w={4} h={4}>
+                            <Image
+                              width={48}
+                              height={48}
+                              alt=""
+                              src="/upload.png"
+                              layout="responsive"
+                            />
+                          </Box>
+                          <Text>Upload a document</Text>
+                        </HStack>
                       </ChakraLink>
                     </Link>
                   </VStack>
