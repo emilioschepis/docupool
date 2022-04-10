@@ -131,7 +131,7 @@ const App: NextPage = () => {
                           {viewed.document.title}
                         </Text>
                         <Text fontSize="md" color="#88918F" fontWeight="bold">
-                          {viewed.document.topic.name}
+                          {viewed.document.topic?.name ?? ""}
                         </Text>
                       </VStack>
                     </VStack>
