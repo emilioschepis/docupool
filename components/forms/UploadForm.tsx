@@ -107,7 +107,7 @@ const UploadForm = ({ topics }: Props) => {
 
   return (
     <>
-      {isSubmitSuccessful || true ? (
+      {isSubmitSuccessful ? (
         <VStack maxW="512px" mx="auto" px={6} spacing={4}>
           <Box pointerEvents="none" width={128} height={128}>
             <Image
@@ -217,8 +217,8 @@ const UploadForm = ({ topics }: Props) => {
                   <VStack
                     justifyContent="center"
                     p={16}
-                    bg="rgba(37, 167, 138, 0.05)"
-                    borderWidth={1}
+                    bg="rgba(37, 167, 138, 0.15)"
+                    borderWidth={2}
                     borderStyle="dashed"
                     borderColor="brand"
                     height="300px"

@@ -90,6 +90,13 @@ const DocumentsTable = ({}: Props) => {
                         Approved
                       </Text>
                     </>
+                  ) : document.status === "rejected" ? (
+                    <>
+                      <Box w={4} h={4} bg="red" borderRadius="full" />
+                      <Text fontSize="md" color="#88918F">
+                        Rejected
+                      </Text>
+                    </>
                   ) : null}
                 </HStack>
               </Td>
