@@ -1,5 +1,6 @@
 import { Box, Heading, useMediaQuery } from "@chakra-ui/react";
 import type { NextPage } from "next";
+import Head from "next/head";
 import DocumentsTable from "../../components/downloads/DocumentsTable";
 import Header from "../../components/Header";
 
@@ -8,6 +9,9 @@ const Downloads: NextPage = () => {
 
   return (
     <Box>
+      <Head>
+        <title>Downloads | DocuPool</title>
+      </Head>
       <Header />
       <Heading
         as="h1"

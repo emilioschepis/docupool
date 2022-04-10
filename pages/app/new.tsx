@@ -1,5 +1,6 @@
 import { Box, Heading, useMediaQuery } from "@chakra-ui/react";
 import type { NextPage } from "next";
+import Head from "next/head";
 import { useQuery } from "react-query";
 import UploadForm from "../../components/forms/UploadForm";
 import Header from "../../components/Header";
@@ -20,6 +21,9 @@ const New: NextPage = () => {
 
   return (
     <Box>
+      <Head>
+        <title>Upload a document | DocuPool</title>
+      </Head>
       <Header />
       <Heading
         as="h1"

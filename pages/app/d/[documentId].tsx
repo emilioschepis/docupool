@@ -8,6 +8,7 @@ import {
 } from "@chakra-ui/react";
 import { createClient } from "@supabase/supabase-js";
 import type { GetServerSideProps, NextPage } from "next";
+import Head from "next/head";
 import Link from "next/link";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import Header from "../../../components/Header";
@@ -82,6 +83,9 @@ const DocumentPage: NextPage<Props> = ({ document: _document }) => {
 
   return (
     <Box>
+      <Head>
+        <title>{document.title} | DocuPool</title>
+      </Head>
       <Header />
       <VStack maxW="512px" p={6} spacing={6} mx="auto" alignItems="flex-start">
         <VStack alignItems="flex-start" spacing={2}>

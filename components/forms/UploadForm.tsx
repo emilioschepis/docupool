@@ -44,7 +44,6 @@ const UploadForm = ({ topics }: Props) => {
     setValue,
     formState: { errors, isValid, isSubmitting, isSubmitSuccessful },
   } = useForm<Fields>({ mode: "onChange" });
-  const [isDesktop] = useMediaQuery("(min-width: 768px)");
   const [isDragging, setDragging] = useState(false);
   const fileInputRef = useRef<HTMLDivElement>(null);
 
@@ -139,38 +138,6 @@ const UploadForm = ({ topics }: Props) => {
           px={6}
         >
           <VStack spacing={4} alignItems="flex-start">
-            {isDesktop ? (
-              <Flex
-                w="full"
-                borderRadius="lg"
-                borderWidth={2}
-                borderColor="brand"
-                overflow="hidden"
-                bg="brand"
-              >
-                <Box flex={1} bg="brand" color="white" py={2}>
-                  <Text
-                    w="full"
-                    textAlign="center"
-                    fontSize="lg"
-                    fontWeight="bold"
-                  >
-                    Selection &amp; Details
-                  </Text>
-                </Box>
-                <Box flex={1} color="brand" bg="white" py={2}>
-                  <Text
-                    w="full"
-                    textAlign="center"
-                    fontSize="lg"
-                    fontWeight="bold"
-                  >
-                    In review
-                  </Text>
-                </Box>
-              </Flex>
-            ) : null}
-
             <FormControl
               ref={fileInputRef}
               isInvalid={!!errors.file}
@@ -222,7 +189,7 @@ const UploadForm = ({ topics }: Props) => {
                     borderWidth={2}
                     borderStyle="dashed"
                     borderColor="brand"
-                    height="300px"
+                    height="350px"
                   >
                     {watch("file")?.item(0)?.name ? (
                       <>

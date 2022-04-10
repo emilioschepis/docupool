@@ -14,6 +14,7 @@ import {
   useMediaQuery,
 } from "@chakra-ui/react";
 import type { NextPage } from "next";
+import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -67,6 +68,9 @@ const Register: NextPage = () => {
 
   return (
     <Box as="form" onSubmit={handleSubmit(register)} p={6} h="100vh">
+      <Head>
+        <title>Register | DocuPool</title>
+      </Head>
       <Flex w="full" h="full" alignItems="center">
         {isDesktop && (
           <Flex

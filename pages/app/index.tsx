@@ -9,8 +9,10 @@ import {
   Text,
   useMediaQuery,
   HStack,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import type { NextPage } from "next";
+import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "react-query";
@@ -21,7 +23,7 @@ import supabase from "../../lib/supabase";
 const formatter = Intl.DateTimeFormat();
 
 const App: NextPage = () => {
-  const [isDesktop] = useMediaQuery("(min-width: 768px)");
+  const showPreviews = useBreakpointValue({ base: false, md: true }, "base");
   const { data: followedTopics } = useQuery(["FOLLOWING_TOPICS"], async () => {
     const { data, error } = await supabase
       .from("topic_followers")
@@ -54,6 +56,9 @@ const App: NextPage = () => {
 
   return (
     <Box>
+      <Head>
+        <title>DocuPool</title>
+      </Head>
       <Header />
       <Flex
         w="full"
@@ -62,14 +67,14 @@ const App: NextPage = () => {
         borderBottomColor="#F5F6F7"
       >
         <Box
-          w={isDesktop ? "66%" : "100%"}
-          px={isDesktop ? 0 : 6}
-          py={isDesktop ? 16 : 12}
+          w={{ base: "100%", md: "66%" }}
+          px={{ base: 6, md: 0 }}
+          py={{ base: 12, md: 16 }}
         >
           <SearchBar />
         </Box>
       </Flex>
-      <VStack p={isDesktop ? 10 : 6} spacing={10} alignItems="flex-start">
+      <VStack p={{ base: 6, md: 10 }} spacing={10} alignItems="flex-start">
         <Box>
           <Heading as="h2" fontSize="2xl" fontWeight="normal" color="#2B3B38">
             Followed topics
@@ -100,14 +105,14 @@ const App: NextPage = () => {
           <Heading as="h2" fontSize="2xl" fontWeight="normal" color="#2B3B38">
             Recently viewed
           </Heading>
-          {isDesktop ? (
+          {showPreviews ? (
             <Wrap spacing={3} mt={4}>
               {recentDocuments?.map((viewed) => (
                 <WrapItem key={viewed.document.id}>
                   <Link href={`/app/d/${viewed.document.id}`} passHref>
                     <ChakraLink>
                       <VStack
-                        w={isDesktop ? "250px" : "full"}
+                        w={{ base: "full", md: "250px" }}
                         alignItems="flex-start"
                         spacing={2}
                       >
