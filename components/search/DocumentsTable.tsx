@@ -11,11 +11,11 @@ import {
   Link as ChakraLink,
 } from "@chakra-ui/react";
 import Link from "next/link";
-import { Document } from "../../lib/types/types";
+import { Document, Topic } from "../../lib/types/types";
 
 type Props = {
   search: string;
-  documents: Document[];
+  documents: (Document & { topic: Topic })[];
 };
 
 const DocumentsTable = ({ search, documents }: Props) => {
@@ -26,7 +26,7 @@ const DocumentsTable = ({ search, documents }: Props) => {
           <Tr>
             <Th>title</Th>
             <Th>description</Th>
-            <Th>status</Th>
+            <Th>topic</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -52,7 +52,11 @@ const DocumentsTable = ({ search, documents }: Props) => {
                   </Link>
                 </Td>
                 <Td>{document.description}</Td>
-                <Td>{document.status}</Td>
+                <Td>
+                  <Link href={`/app/t/${document.topic.id}`} passHref>
+                    <ChakraLink>{document.topic.name}</ChakraLink>
+                  </Link>
+                </Td>
               </Tr>
             );
           })}

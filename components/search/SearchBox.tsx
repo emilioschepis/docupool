@@ -12,14 +12,14 @@ type Props = {};
 const SearchBox = ({}: Props) => {
   const router = useRouter();
   const user = supabase.auth.user();
+  const search = (router.query.q as string) ?? "";
   const [text, setText] = useState((router.query.q as string) ?? "");
-  const [search, setSearch] = useState((router.query.q as string) ?? "");
   const { data } = useQuery(
     ["SEARCH", search],
     async () => {
       const { data, error } = await supabase
-        .from<Document>("documents")
-        .select("*")
+        .from<Document & { topic: Topic }>("documents")
+        .select("*,topic:topics(*)")
         .neq("user_id", user!.id)
         .ilike("title", "%" + search + "%");
 
@@ -29,7 +29,7 @@ const SearchBox = ({}: Props) => {
 
       return data;
     },
-    { enabled: search.length > 3, keepPreviousData: true }
+    { enabled: search.length >= 3 }
   );
 
   const { data: topicsData } = useQuery(
@@ -46,18 +46,20 @@ const SearchBox = ({}: Props) => {
 
       return data;
     },
-    { enabled: search.length > 3, keepPreviousData: true }
+    { enabled: search.length >= 3 }
   );
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      setSearch(text);
+      if (text !== router.query.q) {
+        router.replace(`/app/search?q=${text}`, undefined, { shallow: true });
+      }
     }, 200);
 
     return () => {
       clearTimeout(timeout);
     };
-  }, [text]);
+  }, [router, text]);
 
   return (
     <Box>
@@ -66,8 +68,12 @@ const SearchBox = ({}: Props) => {
         onChange={(event) => setText(event.target.value)}
         placeholder="Search"
       />
-      <DocumentsTable search={search} documents={data ?? []} />
-      <TopicsTable search={search} topics={topicsData ?? []} />
+      {search.length >= 3 ? (
+        <>
+          <DocumentsTable search={search} documents={data ?? []} />
+          <TopicsTable search={search} topics={topicsData ?? []} />
+        </>
+      ) : null}
     </Box>
   );
 };

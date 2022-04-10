@@ -6,6 +6,7 @@ import { QueryClientProvider } from "react-query";
 import queryClient from "../lib/query/client";
 import supabase from "../lib/supabase";
 import theme from "../styles/theme";
+import { ReactQueryDevtools } from "react-query/devtools";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -42,6 +43,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ChakraProvider theme={theme}>
         <Component {...pageProps} />
       </ChakraProvider>
+      <ReactQueryDevtools />
     </QueryClientProvider>
   );
 }
