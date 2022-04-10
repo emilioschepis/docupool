@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Flex,
   Heading,
   HStack,
   Link as ChakraLink,
@@ -126,13 +127,23 @@ const TopicPage: NextPage<Props> = ({ topic }) => {
                     alignItems="flex-start"
                     spacing={2}
                   >
-                    <Box
+                    <Flex
                       position="relative"
                       w="full"
                       h="180px"
-                      bg="#EBEDEF"
+                      bg="rgba(37, 167, 138, 0.15)"
                       borderRadius={4}
+                      justifyContent="center"
+                      alignItems="center"
                     >
+                      <Box w={12}>
+                        <Image
+                          width={200}
+                          height={300}
+                          alt=""
+                          src="/document.png"
+                        />
+                      </Box>
                       <HStack
                         bg="brand"
                         color="white"
@@ -156,7 +167,7 @@ const TopicPage: NextPage<Props> = ({ topic }) => {
                           01
                         </Text>
                       </HStack>
-                    </Box>
+                    </Flex>
                     <VStack alignItems="flex-start" spacing={0}>
                       <Text fontSize="xs" color="#88918F">
                         {formatter.format(new Date(document.created_at))}
