@@ -2,8 +2,13 @@ import {
   Box,
   Button,
   Heading,
+  HStack,
   Link as ChakraLink,
   Text,
+  useMediaQuery,
+  VStack,
+  Wrap,
+  WrapItem,
 } from "@chakra-ui/react";
 import { createClient } from "@supabase/supabase-js";
 import type { GetServerSideProps, NextPage } from "next";
@@ -14,13 +19,13 @@ import supabase from "../../../lib/supabase";
 import { Document, Topic } from "../../../lib/types/types";
 
 type Props = {
-  topic: Topic;
-  documents: Document[];
+  topic: Topic & { documents: Document[] };
 };
 
 const formatter = Intl.DateTimeFormat();
 
-const TopicPage: NextPage<Props> = ({ topic, documents }) => {
+const TopicPage: NextPage<Props> = ({ topic }) => {
+  const [isDesktop] = useMediaQuery("(min-width: 768px)");
   const queryClient = useQueryClient();
   const { data, isLoading } = useQuery(
     ["FOLLOWING_TOPIC", topic.id],
@@ -77,29 +82,113 @@ const TopicPage: NextPage<Props> = ({ topic, documents }) => {
   return (
     <Box>
       <Header />
-      <Heading as="h1">{topic.name}</Heading>
-      {isLoading ? (
-        <></>
-      ) : data ? (
-        <Button isLoading={isLoadingUnfollow} onClick={() => unfollow()}>
-          Unfollow
-        </Button>
-      ) : (
-        <Button isLoading={isLoadingFollow} onClick={() => follow()}>
-          Follow
-        </Button>
-      )}
-      {documents.map((document) => (
-        <Box key={document.id}>
-          <Heading as="h2">
-            <Link href={`/app/d/${document.id}`} passHref>
-              <ChakraLink>{document.title}</ChakraLink>
-            </Link>
+      <VStack
+        alignItems="stretch"
+        pt={isDesktop ? 12 : 4}
+        px={isDesktop ? 10 : 6}
+        mb={8}
+        spacing={0}
+      >
+        <Text fontSize="sm" color="#798683">
+          <b>{topic.documents.length}</b> documents available
+        </Text>
+        <HStack
+          justifyContent={isDesktop ? "flex-start" : "space-between"}
+          alignItems="center"
+        >
+          <Heading as="h1" fontSize="2xl" fontWeight="normal" color="#2B3B38">
+            {topic.name}
           </Heading>
-          <Text>{document.description}</Text>
-          <Text>{formatter.format(new Date(document.created_at))}</Text>
-        </Box>
-      ))}
+          {data ? (
+            <Button
+              isLoading={isLoadingUnfollow}
+              onClick={() => unfollow()}
+              h={6}
+            >
+              Unfollow
+            </Button>
+          ) : (
+            <Button isLoading={isLoadingFollow} onClick={() => follow()} h={6}>
+              Follow
+            </Button>
+          )}
+        </HStack>
+      </VStack>
+      {isDesktop ? (
+        <Wrap spacing={3} mt={4} px={10}>
+          {topic.documents?.map((document) => (
+            <WrapItem key={document.id}>
+              <Link href={`/app/d/${document.id}`} passHref>
+                <ChakraLink>
+                  <VStack
+                    w={isDesktop ? "250px" : "full"}
+                    alignItems="flex-start"
+                    spacing={2}
+                  >
+                    <Box
+                      position="relative"
+                      w="full"
+                      h="180px"
+                      bg="#EBEDEF"
+                      borderRadius={4}
+                    >
+                      <Text
+                        bg="brand"
+                        color="white"
+                        position="absolute"
+                        top={0}
+                        right={0}
+                        py={1.5}
+                        px={4}
+                        fontWeight="bold"
+                        fontSize="md"
+                        borderRadius={4}
+                      >
+                        01
+                      </Text>
+                    </Box>
+                    <VStack alignItems="flex-start" spacing={0}>
+                      <Text fontSize="xs" color="#88918F">
+                        {formatter.format(new Date(document.created_at))}
+                      </Text>
+
+                      <Text fontSize="lg" color="#2B3B38" fontWeight="bold">
+                        {document.title}
+                      </Text>
+                    </VStack>
+                  </VStack>
+                </ChakraLink>
+              </Link>
+            </WrapItem>
+          ))}
+        </Wrap>
+      ) : (
+        <VStack alignItems="flex-start" mt={4} px={6}>
+          {topic.documents?.map((document) => (
+            <Box
+              key={document.id}
+              pb={2}
+              borderBottomWidth={1}
+              borderBottomColor="#F5F6F7"
+            >
+              <Link href={`/app/d/${document.id}`} passHref>
+                <ChakraLink>
+                  <Text
+                    fontSize="md"
+                    fontWeight="bold"
+                    textDecoration="underline"
+                  >
+                    {document.title}
+                  </Text>
+                  <Text fontSize="sm" color="#88918F">
+                    {formatter.format(new Date(document.created_at))}
+                  </Text>
+                </ChakraLink>
+              </Link>
+            </Box>
+          ))}
+        </VStack>
+      )}
     </Box>
   );
 };

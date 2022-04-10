@@ -43,7 +43,7 @@ const UploadForm = ({ topics }: Props) => {
     setValue,
     formState: { errors, isValid, isSubmitting, isSubmitSuccessful },
   } = useForm<Fields>({ mode: "onChange" });
-  const [isDesktop] = useMediaQuery("min-width(768px)");
+  const [isDesktop] = useMediaQuery("(min-width: 768px)");
   const [isDragging, setDragging] = useState(false);
   const fileInputRef = useRef<HTMLDivElement>(null);
 

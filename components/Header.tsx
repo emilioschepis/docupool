@@ -24,7 +24,7 @@ import supabase from "../lib/supabase";
 type Props = {};
 
 const HeaderUser = () => {
-  const [isDesktop] = useMediaQuery("min-width(768px)");
+  const [isDesktop] = useMediaQuery("(min-width: 768px)");
   const { data: coinsData, isLoading: isLoadingCoins } = useQuery(
     "MY_COINS",
     async () => {
@@ -83,7 +83,7 @@ const HeaderUser = () => {
 const Header = ({}: Props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const pathname = useRouter().pathname;
-  const [isDesktop] = useMediaQuery("min-width(768px)");
+  const [isDesktop] = useMediaQuery("(min-width: 768px)");
 
   return (
     <Flex

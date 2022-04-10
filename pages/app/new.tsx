@@ -7,7 +7,7 @@ import supabase from "../../lib/supabase";
 import { Topic } from "../../lib/types/types";
 
 const New: NextPage = () => {
-  const [isDesktop] = useMediaQuery("min-width(768px)");
+  const [isDesktop] = useMediaQuery("(min-width: 768px)");
   const { data } = useQuery(["ALL_TOPICS"], async () => {
     const { data, error } = await supabase.from<Topic>("topics").select("*");
 

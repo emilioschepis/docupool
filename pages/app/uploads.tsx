@@ -4,7 +4,7 @@ import Header from "../../components/Header";
 import DocumentsTable from "../../components/uploads/DocumentsTable";
 
 const Uploads: NextPage = () => {
-  const [isDesktop] = useMediaQuery("min-width(768px)");
+  const [isDesktop] = useMediaQuery("(min-width: 768px)");
 
   return (
     <Box>

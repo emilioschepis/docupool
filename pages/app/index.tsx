@@ -19,7 +19,7 @@ import supabase from "../../lib/supabase";
 const formatter = Intl.DateTimeFormat();
 
 const App: NextPage = () => {
-  const [isDesktop] = useMediaQuery("min-width(768px)");
+  const [isDesktop] = useMediaQuery("(min-width: 768px)");
   const { data: followedTopics } = useQuery(["FOLLOWING_TOPICS"], async () => {
     const { data, error } = await supabase
       .from("topic_followers")

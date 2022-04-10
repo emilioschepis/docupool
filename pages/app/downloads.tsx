@@ -4,7 +4,7 @@ import DocumentsTable from "../../components/downloads/DocumentsTable";
 import Header from "../../components/Header";
 
 const Downloads: NextPage = () => {
-  const [isDesktop] = useMediaQuery("min-width(768px)");
+  const [isDesktop] = useMediaQuery("(min-width: 768px)");
 
   return (
     <Box>

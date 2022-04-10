@@ -28,7 +28,7 @@ const formatter = Intl.DateTimeFormat();
 
 const Search: NextPage = () => {
   const router = useRouter();
-  const [isDesktop] = useMediaQuery("min-width(768px)");
+  const [isDesktop] = useMediaQuery("(min-width: 768px)");
   const search = (router.query.q as string) ?? "";
   const [text, setText] = useState((router.query.q as string) ?? "");
   const { data, isLoading: isLoadingDocuments } = useQuery(
