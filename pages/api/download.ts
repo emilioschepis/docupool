@@ -28,6 +28,8 @@ export default async function handler(
     return res.status(500).json({ message: "An unknown error has occurred." });
   }
 
+  const extension = data.filename.split(".")[1];
+
   const { data: file, error: downloadError } = await supabase.storage
     .from("uploads")
     .download(`${data.user_id}/${data.id}/${data.filename}`);
@@ -39,7 +41,10 @@ export default async function handler(
 
   res.setHeader("Content-Type", file.type);
   res.setHeader("Content-Length", file.size);
-  res.setHeader("Content-Disposition", "attachment");
+  res.setHeader(
+    "Content-Disposition",
+    `attachment; filename="${data.title} (Docupool).${extension}"`
+  );
 
   const buffer = Buffer.from(await file.arrayBuffer());
   res.write(buffer, "binary");
