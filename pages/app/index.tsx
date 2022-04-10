@@ -7,6 +7,7 @@ import {
   Flex,
   VStack,
   Text,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import Link from "next/link";
@@ -18,6 +19,7 @@ import supabase from "../../lib/supabase";
 const formatter = Intl.DateTimeFormat();
 
 const App: NextPage = () => {
+  const [isDesktop] = useMediaQuery("min-width(768px)");
   const { data: followedTopics } = useQuery(["FOLLOWING_TOPICS"], async () => {
     const { data, error } = await supabase
       .from("topic_followers")
@@ -57,11 +59,15 @@ const App: NextPage = () => {
         borderBottomWidth={8}
         borderBottomColor="#F5F6F7"
       >
-        <Box w="66%" py={16}>
+        <Box
+          w={isDesktop ? "66%" : "100%"}
+          px={isDesktop ? 0 : 6}
+          py={isDesktop ? 16 : 12}
+        >
           <SearchBar />
         </Box>
       </Flex>
-      <VStack p={10} spacing={10} alignItems="flex-start">
+      <VStack p={isDesktop ? 10 : 6} spacing={10} alignItems="flex-start">
         <Box>
           <Heading as="h2" fontSize="2xl" fontWeight="normal" color="#2B3B38">
             Followed topics
@@ -92,54 +98,86 @@ const App: NextPage = () => {
           <Heading as="h2" fontSize="2xl" fontWeight="normal" color="#2B3B38">
             Recently viewed
           </Heading>
-          <Wrap spacing={3} mt={4}>
-            {recentDocuments?.map((viewed) => (
-              <WrapItem key={viewed.document.id}>
-                <Link href={`/app/d/${viewed.document.id}`} passHref>
-                  <ChakraLink>
-                    <VStack w="250px" alignItems="flex-start" spacing={2}>
-                      <Box
-                        position="relative"
-                        w="full"
-                        h="180px"
-                        bg="#EBEDEF"
-                        borderRadius={4}
+          {isDesktop ? (
+            <Wrap spacing={3} mt={4}>
+              {recentDocuments?.map((viewed) => (
+                <WrapItem key={viewed.document.id}>
+                  <Link href={`/app/d/${viewed.document.id}`} passHref>
+                    <ChakraLink>
+                      <VStack
+                        w={isDesktop ? "250px" : "full"}
+                        alignItems="flex-start"
+                        spacing={2}
                       >
-                        <Text
-                          bg="brand"
-                          color="white"
-                          position="absolute"
-                          top={0}
-                          right={0}
-                          py={1.5}
-                          px={4}
-                          fontWeight="bold"
-                          fontSize="md"
+                        <Box
+                          position="relative"
+                          w="full"
+                          h="180px"
+                          bg="#EBEDEF"
                           borderRadius={4}
                         >
-                          01
-                        </Text>
-                      </Box>
-                      <VStack alignItems="flex-start" spacing={0}>
-                        <Text fontSize="xs" color="#88918F">
-                          {formatter.format(
-                            new Date(viewed.document.created_at)
-                          )}
-                        </Text>
+                          <Text
+                            bg="brand"
+                            color="white"
+                            position="absolute"
+                            top={0}
+                            right={0}
+                            py={1.5}
+                            px={4}
+                            fontWeight="bold"
+                            fontSize="md"
+                            borderRadius={4}
+                          >
+                            01
+                          </Text>
+                        </Box>
+                        <VStack alignItems="flex-start" spacing={0}>
+                          <Text fontSize="xs" color="#88918F">
+                            {formatter.format(
+                              new Date(viewed.document.created_at)
+                            )}
+                          </Text>
 
-                        <Text fontSize="lg" color="#2B3B38" fontWeight="bold">
-                          {viewed.document.title}
-                        </Text>
-                        <Text fontSize="md" color="#88918F" fontWeight="bold">
-                          {viewed.document.topic?.name ?? ""}
-                        </Text>
+                          <Text fontSize="lg" color="#2B3B38" fontWeight="bold">
+                            {viewed.document.title}
+                          </Text>
+                          <Text fontSize="md" color="#88918F" fontWeight="bold">
+                            {viewed.document.topic?.name ?? "-"}
+                          </Text>
+                        </VStack>
                       </VStack>
-                    </VStack>
-                  </ChakraLink>
-                </Link>
-              </WrapItem>
-            ))}
-          </Wrap>
+                    </ChakraLink>
+                  </Link>
+                </WrapItem>
+              ))}
+            </Wrap>
+          ) : (
+            <VStack alignItems="flex-start" mt={4}>
+              {recentDocuments?.map((viewed) => (
+                <Box
+                  key={viewed.document.id}
+                  pb={2}
+                  borderBottomWidth={1}
+                  borderBottomColor="#F5F6F7"
+                >
+                  <Link href={`/app/d/${viewed.document.id}`} passHref>
+                    <ChakraLink>
+                      <Text
+                        fontSize="md"
+                        fontWeight="bold"
+                        textDecoration="underline"
+                      >
+                        {viewed.document.title}
+                      </Text>
+                      <Text fontSize="sm" color="#88918F">
+                        {viewed.document.topic?.name ?? "-"}
+                      </Text>
+                    </ChakraLink>
+                  </Link>
+                </Box>
+              ))}
+            </VStack>
+          )}
         </Box>
       </VStack>
     </Box>

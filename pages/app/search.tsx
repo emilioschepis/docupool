@@ -12,6 +12,7 @@ import {
   InputRightAddon,
   IconButton,
   InputGroup,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import Link from "next/link";
@@ -27,7 +28,7 @@ const formatter = Intl.DateTimeFormat();
 
 const Search: NextPage = () => {
   const router = useRouter();
-  const user = supabase.auth.user();
+  const [isDesktop] = useMediaQuery("min-width(768px)");
   const search = (router.query.q as string) ?? "";
   const [text, setText] = useState((router.query.q as string) ?? "");
   const { data, isLoading: isLoadingDocuments } = useQuery(
@@ -85,7 +86,11 @@ const Search: NextPage = () => {
         borderBottomWidth={8}
         borderBottomColor="#F5F6F7"
       >
-        <Box w="66%" py={16}>
+        <Box
+          w={isDesktop ? "66%" : "100%"}
+          px={isDesktop ? 0 : 6}
+          py={isDesktop ? 16 : 12}
+        >
           <InputGroup height={16}>
             <Input
               id="search"
@@ -111,7 +116,7 @@ const Search: NextPage = () => {
           </InputGroup>
         </Box>
       </Flex>
-      <VStack p={10} spacing={10} alignItems="flex-start">
+      <VStack p={isDesktop ? 10 : 6} spacing={10} alignItems="flex-start">
         {router.query.q &&
         router.query.q.length >= 3 &&
         !isLoadingTopics &&
@@ -169,60 +174,90 @@ const Search: NextPage = () => {
               >
                 Documents with &ldquo;<b>{router.query.q}</b>&rdquo;
               </Heading>
-              <Wrap spacing={3} mt={4}>
-                {data?.map((document) => (
-                  <WrapItem key={document.id}>
-                    <Link href={`/app/d/${document.id}`} passHref>
-                      <ChakraLink>
-                        <VStack w="250px" alignItems="flex-start" spacing={2}>
-                          <Box
-                            position="relative"
-                            w="full"
-                            h="180px"
-                            bg="#EBEDEF"
-                            borderRadius={4}
-                          >
-                            <Text
-                              bg="brand"
-                              color="white"
-                              position="absolute"
-                              top={0}
-                              right={0}
-                              py={1.5}
-                              px={4}
-                              fontWeight="bold"
-                              fontSize="md"
+              {isDesktop ? (
+                <Wrap spacing={3} mt={4}>
+                  {data?.map((document) => (
+                    <WrapItem key={document.id}>
+                      <Link href={`/app/d/${document.id}`} passHref>
+                        <ChakraLink>
+                          <VStack w="250px" alignItems="flex-start" spacing={2}>
+                            <Box
+                              position="relative"
+                              w="full"
+                              h="180px"
+                              bg="#EBEDEF"
                               borderRadius={4}
                             >
-                              01
-                            </Text>
-                          </Box>
-                          <VStack alignItems="flex-start" spacing={0}>
-                            <Text fontSize="xs" color="#88918F">
-                              {formatter.format(new Date(document.created_at))}
-                            </Text>
+                              <Text
+                                bg="brand"
+                                color="white"
+                                position="absolute"
+                                top={0}
+                                right={0}
+                                py={1.5}
+                                px={4}
+                                fontWeight="bold"
+                                fontSize="md"
+                                borderRadius={4}
+                              >
+                                01
+                              </Text>
+                            </Box>
+                            <VStack alignItems="flex-start" spacing={0}>
+                              <Text fontSize="xs" color="#88918F">
+                                {formatter.format(
+                                  new Date(document.created_at)
+                                )}
+                              </Text>
 
-                            <Text
-                              fontSize="lg"
-                              color="#2B3B38"
-                              fontWeight="bold"
-                            >
-                              {document.title}
-                            </Text>
-                            <Text
-                              fontSize="md"
-                              color="#88918F"
-                              fontWeight="bold"
-                            >
-                              {document.topic.name}
-                            </Text>
+                              <Text
+                                fontSize="lg"
+                                color="#2B3B38"
+                                fontWeight="bold"
+                              >
+                                {document.title}
+                              </Text>
+                              <Text
+                                fontSize="md"
+                                color="#88918F"
+                                fontWeight="bold"
+                              >
+                                {document.topic.name}
+                              </Text>
+                            </VStack>
                           </VStack>
-                        </VStack>
-                      </ChakraLink>
-                    </Link>
-                  </WrapItem>
-                ))}
-              </Wrap>
+                        </ChakraLink>
+                      </Link>
+                    </WrapItem>
+                  ))}
+                </Wrap>
+              ) : (
+                <VStack alignItems="flex-start" mt={4}>
+                  {data?.map((document) => (
+                    <Box
+                      key={document.id}
+                      pb={2}
+                      borderBottomWidth={1}
+                      borderBottomColor="#F5F6F7"
+                    >
+                      <Link href={`/app/d/${document.id}`} passHref>
+                        <ChakraLink>
+                          <Text
+                            fontSize="md"
+                            fontWeight="bold"
+                            textDecoration="underline"
+                          >
+                            {document.title}
+                          </Text>
+                          <Text fontSize="sm" color="#88918F">
+                            {document.topic?.name ?? "-"}
+                          </Text>
+                        </ChakraLink>
+                      </Link>
+                    </Box>
+                  ))}
+                </VStack>
+              )}
             </Box>
           </>
         ) : null}
