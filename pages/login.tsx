@@ -14,6 +14,7 @@ import {
   useMediaQuery,
 } from "@chakra-ui/react";
 import type { NextPage } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
@@ -58,7 +59,27 @@ const Login: NextPage = () => {
     <Box as="form" onSubmit={handleSubmit(login)} p={6} h="100vh">
       <Flex w="full" h="full" alignItems="center">
         {isDesktop && (
-          <Box flex={1} bg="brand" h="full" borderRadius="xl" mr={8}></Box>
+          <Flex
+            direction="column"
+            flex={1}
+            justifyContent="center"
+            alignItems="center"
+            bg="brand"
+            h="full"
+            borderRadius="xl"
+            mr={8}
+          >
+            <Image width={200} height={200} src="/logo.png" alt="" />
+            <Text
+              mt={6}
+              color="white"
+              fontSize="4xl"
+              lineHeight={7}
+              fontWeight="bold"
+            >
+              DocuPool
+            </Text>
+          </Flex>
         )}
         <Box flex={2}>
           <Box maxW="512px" mx="auto">

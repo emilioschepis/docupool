@@ -20,6 +20,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useQuery } from "react-query";
 import supabase from "../lib/supabase";
+import Image from "next/image";
 
 type Props = {};
 
@@ -97,16 +98,24 @@ const Header = ({}: Props) => {
         <>
           <Box as="nav" flex={1}>
             <HStack spacing={10} alignItems="center">
-              <Link href="/app" passHref>
-                <ChakraLink
-                  color="brand"
-                  fontSize="2xl"
-                  lineHeight={7}
-                  fontWeight="bold"
-                >
-                  DocuPool
-                </ChakraLink>
-              </Link>
+              <HStack alignItems="center" spacing={2}>
+                <Image
+                  width="48px"
+                  height="48px"
+                  alt=""
+                  src="/logo-inverted.png"
+                />
+                <Link href="/app" passHref>
+                  <ChakraLink
+                    color="brand"
+                    fontSize="2xl"
+                    lineHeight={7}
+                    fontWeight="bold"
+                  >
+                    DocuPool
+                  </ChakraLink>
+                </Link>
+              </HStack>
               <Link href="/app" passHref>
                 <ChakraLink
                   color={pathname === "/app" ? "brand" : "#81818D"}
@@ -187,6 +196,7 @@ const Header = ({}: Props) => {
               <Flex
                 h={20}
                 dir="row"
+                justifyContent="space-between"
                 alignItems="center"
                 borderBottomWidth={2}
                 borderBottomColor="#F5F6F7"
@@ -196,6 +206,12 @@ const Header = ({}: Props) => {
                   aria-label="close menu"
                   onClick={() => onClose()}
                   icon={<CloseIcon />}
+                />
+                <Image
+                  width="48px"
+                  height="48px"
+                  alt=""
+                  src="/logo-inverted.png"
                 />
               </Flex>
               <DrawerBody>
