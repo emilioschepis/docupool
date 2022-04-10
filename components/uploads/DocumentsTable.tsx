@@ -12,6 +12,7 @@ import {
   HStack,
   Box,
   Text,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { useQuery } from "react-query";
@@ -23,6 +24,7 @@ type Props = {};
 const formatter = Intl.DateTimeFormat();
 
 const DocumentsTable = ({}: Props) => {
+  const [isDesktop] = useMediaQuery("(min-width: 768px)");
   const { data } = useQuery(["MY_DOCUMENTS"], async () => {
     const { data, error } = await supabase
       .from("documents")
@@ -37,7 +39,7 @@ const DocumentsTable = ({}: Props) => {
   });
 
   return (
-    <TableContainer px={10}>
+    <TableContainer px={isDesktop ? 10 : 6}>
       <Table>
         <Thead>
           <Tr borderBottomWidth={8} borderBottomColor="#F5F6F7">
