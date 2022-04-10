@@ -1,7 +1,15 @@
-import { Box, Heading, Link as ChakraLink, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Heading,
+  Link as ChakraLink,
+  Text,
+} from "@chakra-ui/react";
 import { createClient } from "@supabase/supabase-js";
 import type { GetServerSideProps, NextPage } from "next";
 import Link from "next/link";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import supabase from "../../../lib/supabase";
 import { Document, Topic } from "../../../lib/types/types";
 
 type Props = {
@@ -12,9 +20,73 @@ type Props = {
 const formatter = Intl.DateTimeFormat();
 
 const TopicPage: NextPage<Props> = ({ topic, documents }) => {
+  const queryClient = useQueryClient();
+  const { data, isLoading } = useQuery(
+    ["FOLLOWING_TOPIC", topic.id],
+    async () => {
+      const { data, error } = await supabase
+        .from("topic_followers")
+        .select("*")
+        .eq("topic_id", topic.id)
+        .eq("user_id", supabase.auth.user()?.id)
+        .maybeSingle();
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    }
+  );
+
+  const { mutateAsync: follow, isLoading: isLoadingFollow } = useMutation(
+    async () => {
+      const { error } = await supabase
+        .from("topic_followers")
+        .insert({ user_id: supabase.auth.user()?.id, topic_id: topic.id })
+        .single();
+
+      if (error) {
+        throw error;
+      }
+    },
+    {
+      onSuccess: () =>
+        queryClient.refetchQueries(["FOLLOWING_TOPIC", topic.id]),
+    }
+  );
+  const { mutateAsync: unfollow, isLoading: isLoadingUnfollow } = useMutation(
+    async () => {
+      const { error } = await supabase
+        .from("topic_followers")
+        .delete()
+        .match({ user_id: supabase.auth.user()?.id, topic_id: topic.id })
+        .single();
+
+      if (error) {
+        throw error;
+      }
+    },
+    {
+      onSuccess: () =>
+        queryClient.refetchQueries(["FOLLOWING_TOPIC", topic.id]),
+    }
+  );
+
   return (
     <Box>
       <Heading as="h1">{topic.name}</Heading>
+      {isLoading ? (
+        <></>
+      ) : data ? (
+        <Button isLoading={isLoadingUnfollow} onClick={() => unfollow()}>
+          Unfollow
+        </Button>
+      ) : (
+        <Button isLoading={isLoadingFollow} onClick={() => follow()}>
+          Follow
+        </Button>
+      )}
       {documents.map((document) => (
         <Box key={document.id}>
           <Heading as="h2">
