@@ -14,7 +14,7 @@ export async function middleware(req: NextRequest, ev: NextFetchEvent) {
   const payloadBuffer = Buffer.from(token.split(".")[1], "base64");
   const payload = JSON.parse(payloadBuffer.toString());
 
-  if (!payload.exp || payload.exp < new Date().getTime()) {
+  if (!payload.exp || payload.exp * 1000 < new Date().getTime()) {
     const url = req.nextUrl.clone();
     url.pathname = `/login`;
     url.searchParams.append("redirectedFrom", req.nextUrl.pathname);
