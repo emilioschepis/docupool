@@ -68,9 +68,9 @@ const Register: NextPage = () => {
     <Box as="form" onSubmit={handleSubmit(register)} p={6} h="100vh">
       <Flex w="full" h="full" alignItems="center">
         {isDesktop && (
-          <Box flex={1} bg="brand" h="full" borderRadius="xl"></Box>
+          <Box flex={1} bg="brand" h="full" borderRadius="xl" mr={8}></Box>
         )}
-        <Box flex={2} ml={8}>
+        <Box flex={2}>
           <Box maxW="512px" mx="auto">
             <Heading
               as="h1"
