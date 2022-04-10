@@ -10,16 +10,35 @@ import type { GetServerSideProps, NextPage } from "next";
 import Link from "next/link";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import supabase from "../../../lib/supabase";
-import { Document, Topic } from "../../../lib/types/types";
+import { Document, Topic, Unlock } from "../../../lib/types/types";
 
 type Props = {
-  document: Document & { topic: Topic };
+  document: Document & { topic: Topic } & { unlocks: Unlock[] };
 };
 
 const formatter = Intl.DateTimeFormat();
 
-const DocumentPage: NextPage<Props> = ({ document }) => {
+const DocumentPage: NextPage<Props> = ({ document: _document }) => {
   const queryClient = useQueryClient();
+  const { data: document } = useQuery(
+    ["DOCUMENT", _document.id],
+    async () => {
+      const { data, error } = await supabase
+        .from<Document & { topic: Topic } & { unlocks: Unlock[] }>("documents")
+        .select("*,topic:topics(*),unlocks:document_unlocks(user_id)")
+        .eq("id", _document.id)
+        .maybeSingle();
+
+      if (error) {
+        throw error;
+      }
+      return data;
+    },
+    {
+      initialData: _document,
+    }
+  );
+
   const { data } = useQuery("MY_COINS", async () => {
     const { data, error } = await supabase
       .from("user_coins")
@@ -37,15 +56,26 @@ const DocumentPage: NextPage<Props> = ({ document }) => {
     async () =>
       await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_FUNCTIONS_URL}/unlock`, {
         method: "POST",
-        body: JSON.stringify({ documentId: document.id }),
+        body: JSON.stringify({ documentId: document?.id }),
         headers: {
           Authorization: `Bearer ${supabase.auth.session()?.access_token}`,
         },
       }),
     {
-      onSuccess: () => queryClient.refetchQueries("MY_COINS"),
+      onSuccess: () => {
+        queryClient.refetchQueries("MY_COINS");
+        queryClient.refetchQueries(["DOCUMENT", document?.id]);
+      },
     }
   );
+
+  if (!document) {
+    return null;
+  }
+
+  const unlocked =
+    document.user_id === supabase.auth.user()?.id ||
+    !!document.unlocks.find((un) => un.user_id === supabase.auth.user()?.id);
 
   return (
     <Box>
@@ -59,10 +89,10 @@ const DocumentPage: NextPage<Props> = ({ document }) => {
       ) : null}
       <Button
         onClick={() => unlock()}
-        disabled={!data || data.coins < 1}
+        disabled={!data || data.coins < 1 || unlocked}
         isLoading={isLoading}
       >
-        Unlock ({data?.coins})
+        {unlocked ? "Unlocked" : `Unlock (${data?.coins})`}
       </Button>
     </Box>
   );
@@ -77,7 +107,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const adminClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
   const { data, error } = await adminClient
     .from<Document & { topic: Topic }>("documents")
-    .select("*,topic:topics(*)")
+    .select("*,topic:topics(*),unlocks:document_unlocks(user_id)")
     .eq("id", documentId)
     .maybeSingle();
 

@@ -12,3 +12,7 @@ export type Topic = {
   id: string;
   name: string;
 };
+
+export type Unlock = {
+  user_id: string;
+};
