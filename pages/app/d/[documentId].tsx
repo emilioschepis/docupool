@@ -4,6 +4,7 @@ import {
   Link as ChakraLink,
   Text,
   Button,
+  VStack,
 } from "@chakra-ui/react";
 import { createClient } from "@supabase/supabase-js";
 import type { GetServerSideProps, NextPage } from "next";
@@ -74,28 +75,72 @@ const DocumentPage: NextPage<Props> = ({ document: _document }) => {
     return null;
   }
 
-  const unlocked =
-    document.user_id === supabase.auth.user()?.id ||
-    !!document.unlocks.find((un) => un.user_id === supabase.auth.user()?.id);
+  const owned = document.user_id === supabase.auth.user()?.id;
+  const unlocked = !!document.unlocks.find(
+    (un) => un.user_id === supabase.auth.user()?.id
+  );
 
   return (
     <Box>
       <Header />
-      <Heading as="h1">{document.title}</Heading>
-      <Text>{document.description}</Text>
-      <Text>{formatter.format(new Date(document.created_at))}</Text>
-      {document.topic ? (
-        <Link href={`/app/t/${document.topic.id}`} passHref>
-          <ChakraLink>{document.topic.name}</ChakraLink>
-        </Link>
-      ) : null}
-      <Button
-        onClick={() => unlock()}
-        disabled={!data || data.coins < 1 || unlocked}
-        isLoading={isLoading}
-      >
-        {unlocked ? "Unlocked" : `Unlock (${data?.coins})`}
-      </Button>
+      <VStack maxW="512px" p={6} spacing={6} mx="auto" alignItems="flex-start">
+        <VStack alignItems="flex-start" spacing={2}>
+          <Heading as="h1" fontSize="2rem" fontWeight="bold">
+            {document.title}
+          </Heading>
+          {document.topic ? (
+            <Link href={`/app/t/${document.topic.id}`} passHref>
+              <ChakraLink fontWeight="1.5rem" textDecoration="underline">
+                {document.topic.name}
+              </ChakraLink>
+            </Link>
+          ) : null}
+        </VStack>
+        <VStack alignItems="flex-start" spacing={2}>
+          <Text fontSize="md" color="#798683">
+            Description
+          </Text>
+          <Text>{document.description}</Text>
+        </VStack>
+        <VStack alignItems="flex-start" spacing={2}>
+          <Text fontSize="md" color="#798683">
+            Created
+          </Text>
+          <Text>{formatter.format(new Date(document.created_at))}</Text>
+        </VStack>
+        {owned ? null : unlocked ? (
+          <>
+            <Button
+              w="full"
+              isDisabled
+              bg="brand"
+              _hover={{ bg: "brand" }}
+              color="white"
+            >
+              Document unlocked
+            </Button>
+            <Text alignSelf="center">
+              You can find it in the{" "}
+              <Link href="/app/downloads" passHref>
+                <ChakraLink color="brand">downloads</ChakraLink>
+              </Link>{" "}
+              section
+            </Text>
+          </>
+        ) : (
+          <Button
+            w="full"
+            isDisabled={!data || data.coins < 1}
+            isLoading={isLoading}
+            bg="brand"
+            _hover={{ bg: "brand" }}
+            color="white"
+            onProgress={() => unlock()}
+          >
+            Unlock this file
+          </Button>
+        )}
+      </VStack>
     </Box>
   );
 };
