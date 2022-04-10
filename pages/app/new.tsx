@@ -1,4 +1,4 @@
-import { Box, Heading } from "@chakra-ui/react";
+import { Box, Heading, useMediaQuery } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import { useQuery } from "react-query";
 import UploadForm from "../../components/forms/UploadForm";
@@ -7,6 +7,7 @@ import supabase from "../../lib/supabase";
 import { Topic } from "../../lib/types/types";
 
 const New: NextPage = () => {
+  const [isDesktop] = useMediaQuery("min-width(768px)");
   const { data } = useQuery(["ALL_TOPICS"], async () => {
     const { data, error } = await supabase.from<Topic>("topics").select("*");
 
@@ -22,11 +23,12 @@ const New: NextPage = () => {
       <Header />
       <Heading
         as="h1"
-        pt={12}
-        px={10}
+        pt={isDesktop ? 12 : 4}
+        px={isDesktop ? 10 : 6}
         fontSize="2xl"
         fontWeight="normal"
         color="#2B3B38"
+        mb={8}
       >
         Upload a document
       </Heading>
