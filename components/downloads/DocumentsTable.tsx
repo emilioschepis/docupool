@@ -13,17 +13,20 @@ import {
 import Link from "next/link";
 import { useQuery } from "react-query";
 import supabase from "../../lib/supabase";
-import { Document } from "../../lib/types/types";
+import { Document, Topic } from "../../lib/types/types";
 
 type Props = {};
+
+const formatter = Intl.DateTimeFormat();
 
 const DocumentsTable = ({}: Props) => {
   const { data } = useQuery(["UNLOCKED_DOCUMENTS"], async () => {
     const { data, error } = await supabase
-      .from<Document>("documents")
-      .select("*,unlocks:document_unlocks!inner(user_id)")
+      .from("documents")
+      .select(
+        "*,topic:topics(id, name),unlocks:document_unlocks!inner(user_id, created_at)"
+      )
       .neq("user_id", supabase.auth.user()!.id)
-      // @ts-expect-error
       .eq("unlocks.user_id", supabase.auth.user()!.id);
 
     if (error) {
@@ -34,25 +37,42 @@ const DocumentsTable = ({}: Props) => {
   });
 
   return (
-    <TableContainer>
+    <TableContainer px={10}>
       <Table>
         <Thead>
-          <Tr>
-            <Th>title</Th>
-            <Th>description</Th>
-            <Th>download</Th>
+          <Tr borderBottomWidth={8} borderBottomColor="#F5F6F7">
+            <Th paddingInline={0}>title</Th>
+            <Th>topic</Th>
+            <Th>unlocked</Th>
+            <Th isNumeric>download</Th>
           </Tr>
         </Thead>
         <Tbody>
           {data?.map((document) => (
             <Tr key={document.id}>
-              <Td>
+              <Td
+                paddingInline={0}
+                fontSize="md"
+                color="#2B3B38"
+                textDecoration="underline"
+              >
                 <Link href={`/app/d/${document.id}`} passHref>
                   <ChakraLink>{document.title}</ChakraLink>
                 </Link>
               </Td>
-              <Td>{document.description}</Td>
-              <Td>
+              <Td fontSize="md" color="#88918F">
+                {document.topic ? (
+                  <Link href={`/app/t/${document.topic.id}`} passHref>
+                    <ChakraLink>{document.topic.name}</ChakraLink>
+                  </Link>
+                ) : (
+                  "-"
+                )}
+              </Td>
+              <Td fontSize="md" color="#88918F">
+                {formatter.format(new Date(document.unlocks[0].created_at))}
+              </Td>
+              <Td isNumeric>
                 <IconButton
                   aria-label="download"
                   icon={<DownloadIcon />}

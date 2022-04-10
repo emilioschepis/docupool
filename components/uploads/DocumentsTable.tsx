@@ -9,6 +9,9 @@ import {
   Thead,
   Tr,
   Link as ChakraLink,
+  HStack,
+  Box,
+  Text,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { useQuery } from "react-query";
@@ -17,11 +20,13 @@ import { Document } from "../../lib/types/types";
 
 type Props = {};
 
+const formatter = Intl.DateTimeFormat();
+
 const DocumentsTable = ({}: Props) => {
   const { data } = useQuery(["MY_DOCUMENTS"], async () => {
     const { data, error } = await supabase
-      .from<Document>("documents")
-      .select("*")
+      .from("documents")
+      .select("*, topic:topics(*)")
       .eq("user_id", supabase.auth.user()!.id);
 
     if (error) {
@@ -32,34 +37,59 @@ const DocumentsTable = ({}: Props) => {
   });
 
   return (
-    <TableContainer>
+    <TableContainer px={10}>
       <Table>
         <Thead>
-          <Tr>
-            <Th>title</Th>
-            <Th>description</Th>
+          <Tr borderBottomWidth={8} borderBottomColor="#F5F6F7">
+            <Th paddingInline={0}>title</Th>
+            <Th>topic</Th>
+            <Th>created</Th>
             <Th>status</Th>
-            <Th>download</Th>
           </Tr>
         </Thead>
         <Tbody>
           {data?.map((document) => (
             <Tr key={document.id}>
-              <Td>
+              <Td
+                paddingInline={0}
+                fontSize="md"
+                color="#2B3B38"
+                textDecoration="underline"
+              >
                 <Link href={`/app/d/${document.id}`} passHref>
                   <ChakraLink>{document.title}</ChakraLink>
                 </Link>
               </Td>
-              <Td>{document.description}</Td>
-              <Td>{document.status}</Td>
+              <Td fontSize="md" color="#88918F">
+                {document.topic ? (
+                  <Link href={`/app/t/${document.topic.id}`} passHref>
+                    <ChakraLink>{document.topic.name}</ChakraLink>
+                  </Link>
+                ) : (
+                  "-"
+                )}
+              </Td>
+              <Td fontSize="md" color="#88918F">
+                {formatter.format(new Date(document.created_at))}
+              </Td>
               <Td>
-                <IconButton
-                  aria-label="download"
-                  icon={<DownloadIcon />}
-                  onClick={() =>
-                    window.open(`/api/download?id=${document.id}`, "_blank")
-                  }
-                />
+                <HStack w="full">
+                  {document.status === "pending" ? (
+                    <>
+                      <Box w={4} h={4} bg="yellow.400" borderRadius="full" />
+                      <Text fontSize="md" color="#88918F">
+                        Pending
+                      </Text>
+                    </>
+                  ) : document.status === "approved" ? (
+                    <>
+                      <Box w={4} h={4} bg="brand" borderRadius="full" />
+                      <Text fontSize="md" color="#88918F">
+                        Approved
+                      </Text>
+                    </>
+                  ) : null}
+                </HStack>
               </Td>
             </Tr>
           ))}
