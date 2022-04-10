@@ -9,6 +9,7 @@ import { createClient } from "@supabase/supabase-js";
 import type { GetServerSideProps, NextPage } from "next";
 import Link from "next/link";
 import { useMutation, useQuery, useQueryClient } from "react-query";
+import Header from "../../../components/Header";
 import supabase from "../../../lib/supabase";
 import { Document, Topic, Unlock } from "../../../lib/types/types";
 
@@ -79,6 +80,7 @@ const DocumentPage: NextPage<Props> = ({ document: _document }) => {
 
   return (
     <Box>
+      <Header />
       <Heading as="h1">{document.title}</Heading>
       <Text>{document.description}</Text>
       <Text>{formatter.format(new Date(document.created_at))}</Text>

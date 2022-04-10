@@ -9,6 +9,7 @@ import { createClient } from "@supabase/supabase-js";
 import type { GetServerSideProps, NextPage } from "next";
 import Link from "next/link";
 import { useMutation, useQuery, useQueryClient } from "react-query";
+import Header from "../../../components/Header";
 import supabase from "../../../lib/supabase";
 import { Document, Topic } from "../../../lib/types/types";
 
@@ -75,6 +76,7 @@ const TopicPage: NextPage<Props> = ({ topic, documents }) => {
 
   return (
     <Box>
+      <Header />
       <Heading as="h1">{topic.name}</Heading>
       {isLoading ? (
         <></>

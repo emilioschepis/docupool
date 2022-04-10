@@ -2,6 +2,7 @@ import { Box } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import { useQuery } from "react-query";
 import UploadForm from "../../components/forms/UploadForm";
+import Header from "../../components/Header";
 import supabase from "../../lib/supabase";
 import { Topic } from "../../lib/types/types";
 
@@ -18,6 +19,7 @@ const New: NextPage = () => {
 
   return (
     <Box>
+      <Header />
       <UploadForm topics={data ?? []} />
     </Box>
   );
