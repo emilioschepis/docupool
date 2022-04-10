@@ -23,8 +23,7 @@ import supabase from "../lib/supabase";
 
 type Props = {};
 
-const HeaderUser = () => {
-  const [isDesktop] = useMediaQuery("(min-width: 768px)");
+const HeaderUser = ({ avatarOnly = false }: { avatarOnly?: boolean }) => {
   const { data: coinsData, isLoading: isLoadingCoins } = useQuery(
     "MY_COINS",
     async () => {
@@ -66,7 +65,7 @@ const HeaderUser = () => {
   return (
     <HStack alignItems="center" spacing={4}>
       <Avatar name={profileData.name} bg="#F4FBF9" textColor="brand" />
-      {isDesktop ? (
+      {!avatarOnly ? (
         <VStack spacing={0} alignItems="flex-start">
           <Text fontSize="sm" lineHeight={4} fontWeight="bold" color="brand">
             {coinsData.coins} coins
