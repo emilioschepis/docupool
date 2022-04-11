@@ -15,10 +15,45 @@ import {
 } from "@chakra-ui/react";
 import { createClient } from "@supabase/supabase-js";
 import type { GetServerSideProps, NextPage } from "next";
+import supabase from "../../lib/supabase";
+import { useState } from "react";
 
 const formatter = Intl.DateTimeFormat();
 
-const AdminPage: NextPage<{ documents: any[] }> = ({ documents }) => {
+const AdminPage: NextPage<{ documents: any[] }> = ({
+  documents: _documents,
+}) => {
+  const [isLoading, setLoading] = useState(false);
+  const [documents, setDocuments] = useState(_documents);
+
+  async function approve(id: string) {
+    setLoading(true);
+    await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_FUNCTIONS_URL}/approve`, {
+      method: "POST",
+      body: JSON.stringify({ documentId: id }),
+      headers: {
+        Authorization: `Bearer ${supabase.auth.session()?.access_token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then(setDocuments)
+      .finally(() => setLoading(false));
+  }
+
+  async function reject(id: string) {
+    setLoading(true);
+    await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_FUNCTIONS_URL}/reject`, {
+      method: "POST",
+      body: JSON.stringify({ documentId: id }),
+      headers: {
+        Authorization: `Bearer ${supabase.auth.session()?.access_token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then(setDocuments)
+      .finally(() => setLoading(false));
+  }
+
   return (
     <TableContainer>
       <Table>
@@ -54,10 +89,20 @@ const AdminPage: NextPage<{ documents: any[] }> = ({ documents }) => {
               <Td>
                 {document.status === "pending" ? (
                   <HStack>
-                    <Button size="sm" colorScheme="green">
+                    <Button
+                      size="sm"
+                      colorScheme="green"
+                      onClick={() => approve(document.id)}
+                      isLoading={isLoading}
+                    >
                       Approve
                     </Button>
-                    <Button size="sm" colorScheme="red">
+                    <Button
+                      size="sm"
+                      colorScheme="red"
+                      onClick={() => reject(document.id)}
+                      isLoading={isLoading}
+                    >
                       Reject
                     </Button>
                   </HStack>
