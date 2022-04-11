@@ -11,6 +11,18 @@ Built with ❤️ by
 - Emilio — [GitHub](https://github.com/emilioschepis) · [Twitter](https://twitter.com/emilioschepis)
 - Federico — no GitHub or Twitter yet
 
+## Edge Functions
+Edge Functions are the main focus of this project! They are used wherever we need a secure environment to run our code on.
+
+For example, our [admin panel](https://github.com/emilioschepis/docupool/tree/main/pages/admin) uses Edge Functions to approve or reject users' submissions. The business logic for handling the number of coins is directly coded into the function.
+
+Non-admin users interact with functions whenever they unlock a new document!
+
+- [Approve document](https://github.com/emilioschepis/docupool/blob/main/supabase/functions/approve/index.ts)
+- [Reject document](https://github.com/emilioschepis/docupool/blob/main/supabase/functions/reject/index.ts)
+- [Unlock document](https://github.com/emilioschepis/docupool/blob/main/supabase/functions/unlock/index.ts)
+
+
 ## Technologies
 
 This website is built using Supabase, [Next.js](https://nextjs.org/) and [Chakra UI](https://chakra-ui.com/), and it is hosted on [Vercel](https://vercel.com/).
