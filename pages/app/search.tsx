@@ -70,7 +70,7 @@ const Search: NextPage = () => {
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (text !== router.query.q) {
+      if (text !== router.query.q && text !== "") {
         router.replace(`/app/search?q=${text}`, undefined, { shallow: true });
       }
     }, 500);
